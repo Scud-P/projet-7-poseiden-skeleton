@@ -1,10 +1,12 @@
-package com.nnk.springboot;
+package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class RatingService {
@@ -18,4 +20,29 @@ public class RatingService {
         return rating;
     }
 
+    public Rating getRatingById(int id) {
+        Optional<Rating> optionalRating = ratingRepository.findById(id);
+        return optionalRating.orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
+    }
+
+    public Rating updateRating(Rating updatedRating) {
+
+        Rating existingRating = ratingRepository.findById(updatedRating.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
+
+        existingRating.setMoodysRating(updatedRating.getMoodysRating());
+        existingRating.setSandPRating(updatedRating.getSandPRating());
+        existingRating.setFitchRating(updatedRating.getFitchRating());
+        existingRating.setOrderNumber(updatedRating.getOrderNumber());
+
+        ratingRepository.save(existingRating);
+
+        return existingRating;
+    }
+
+    public void deleteRating(Rating ratingToDelete) {
+        Rating existingRating = ratingRepository.findById(ratingToDelete.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
+        ratingRepository.delete(existingRating);
+    }
 }

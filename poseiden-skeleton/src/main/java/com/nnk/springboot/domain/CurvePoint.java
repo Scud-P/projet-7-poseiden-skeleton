@@ -16,24 +16,37 @@ import java.sql.Timestamp;
 @Table(name = "curvepoint")
 public class CurvePoint {
 
+    public CurvePoint() {
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
+    @NotNull(message = "curveId is mandatory")
     @Column(name = "curveId")
-    private int curveId;
+    private Integer curveId;
 
     @Column(name = "asOfDate")
-    private Date asOfDate;
+    private Timestamp asOfDate;
 
     @Column(name = "term")
-    private double term;
+    private Double term;
 
     @Column(name = "value")
-    private double value;
+    private Double value;
 
     @Column(name = "creationDate")
-    private Date creationDate;
+    private Timestamp creationDate;
+
+    public CurvePoint(int id, Integer curveId, Timestamp asOfDate, Double term, Double value, Timestamp creationDate) {
+        this.id = id;
+        this.curveId = curveId;
+        this.asOfDate = asOfDate;
+        this.term = term;
+        this.value = value;
+        this.creationDate = creationDate;
+    }
 
 }
