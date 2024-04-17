@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,5 +50,9 @@ public class CurvePointService {
         CurvePoint existingCurvePoint = curvePointRepository.findById(curvePointToDelete.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Id"));
         curvePointRepository.delete(existingCurvePoint);
+    }
+
+    public List<CurvePoint> getAllCurvePoints() {
+        return curvePointRepository.findAll();
     }
 }
