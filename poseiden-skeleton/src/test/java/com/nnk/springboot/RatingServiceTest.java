@@ -122,9 +122,12 @@ public class RatingServiceTest {
     public void testUpdateRatingRatingNotFound() {
 
         assertThrows(IllegalArgumentException.class, () -> ratingService.updateRating(rating));
-
         verify(ratingRepository, times(0)).save(rating);
+    }
 
+    @Test
+    public void testGetRatingByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> ratingService.getRatingById(rating.getId()));
     }
 
 }

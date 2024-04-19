@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,6 +63,11 @@ public class BidListServiceTest {
     }
 
     @Test
+    public void testGetBidByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> bidService.getBidById(1));
+    }
+
+    @Test
     public void testDeleteFoundBid() {
         bidService.addBid(bidList);
         when(bidListRepository.findById(bidList.getId())).thenReturn(Optional.ofNullable(bidList));
@@ -105,5 +111,15 @@ public class BidListServiceTest {
         verify(bidListRepository, never()).save(any(BidList.class));
     }
 
+    @Test
+    public void testGetAllBids() {
 
+        BidList secondBidList = bidList;
+        List<BidList> allBids = List.of(bidList, secondBidList);
+
+        when(bidListRepository.findAll()).thenReturn(allBids);
+
+        List<BidList> foundBids =  bidService.getAllBids();
+        assertEquals(2, foundBids.size());
+    }
 }

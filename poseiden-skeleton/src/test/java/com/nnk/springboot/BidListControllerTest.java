@@ -132,12 +132,12 @@ public class BidListControllerTest {
 
         mockMvc.perform(post("/bidList/update/1")
                         .param("account", secondList.getAccount())
-                        .param("type", secondList.getType())
+                        .param("type", "")
                         .param("bidQuantity", String.valueOf(secondList.getBidQuantity())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/bidList/list"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("bidList/update"));
 
-        verify(bidService, never()).updateBidList(1, firstList);
+        verify(bidService, never()).updateBidList(anyInt(), any(BidList.class));
     }
 
     @Test

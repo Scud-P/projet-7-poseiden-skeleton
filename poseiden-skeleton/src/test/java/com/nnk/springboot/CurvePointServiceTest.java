@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,18 +26,37 @@ public class CurvePointServiceTest {
     private CurvePointRepository curvePointRepository;
 
     private static CurvePoint curvePoint;
+    private static CurvePoint secondPoint;
 
     @BeforeEach
     public void SetUp() {
 
         int id = 1;
+        int id2 = 2;
         Integer curveId = 10;
+        Integer curveId2 = 20;
         Timestamp firstStamp = new Timestamp(1000000000000L);
         Timestamp secondStamp = new Timestamp(1111111111111L);
         Double term = 1.0;
         Double value = 1.0;
 
         curvePoint = new CurvePoint(id, curveId, firstStamp, term, value, secondStamp);
+        secondPoint = new CurvePoint(id2, curveId2, firstStamp, term, value, secondStamp);
+    }
+
+
+    @Test
+    public void testGetAllCurvePoints() {
+
+        List<CurvePoint> curvePoints = List.of(curvePoint, secondPoint);
+
+        when(curvePointRepository.findAll()).thenReturn(curvePoints);
+
+        List<CurvePoint> foundCurvePoints = curvePointService.getAllCurvePoints();
+
+        assertEquals(curvePoints.size(), foundCurvePoints.size());
+        verify(curvePointRepository, times(1)).findAll();
+
     }
 
     @Test
@@ -95,8 +115,6 @@ public class CurvePointServiceTest {
 
         when(curvePointRepository.findById(id)).thenReturn(Optional.ofNullable(curvePoint));
 
-        System.out.println(curvePoint);
-
         CurvePoint updatedCurvePoint = new CurvePoint();
         updatedCurvePoint.setCurveId(20);
         updatedCurvePoint.setTerm(2.0);
@@ -105,8 +123,6 @@ public class CurvePointServiceTest {
         CurvePoint resultingCurvePoint = curvePointService.updateCurvePoint(id, updatedCurvePoint);
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
-
-        System.out.println(resultingCurvePoint);
 
         assertEquals(20, resultingCurvePoint.getCurveId());
         assertEquals(2.0, resultingCurvePoint.getTerm());
@@ -122,6 +138,11 @@ public class CurvePointServiceTest {
         assertThrows(IllegalArgumentException.class, () -> curvePointService.updateCurvePoint(1, curvePoint));
         verify(curvePointRepository, never()).save(curvePoint);
 
+    }
+
+    @Test
+    public void testGetCurvePointByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> curvePointService.getCurvePointById(curvePoint.getId()));
     }
 
 }

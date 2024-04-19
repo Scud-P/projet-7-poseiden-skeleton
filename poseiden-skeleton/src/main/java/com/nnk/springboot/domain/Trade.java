@@ -15,14 +15,48 @@ import java.sql.Timestamp;
 @Table(name = "trade")
 public class Trade {
 
+    public Trade() {
+    }
+
+    public Trade(int tradeId, String account, String type, double buyQuantity, double sellQuantity,
+                 double buyPrice, double sellPrice, Timestamp tradeDate, String security, String status,
+                 String trader, String benchmark, String book, String creationName, Timestamp creationDate,
+                 String revisionName, Timestamp revisionDate, String dealName, String dealType, String sourceListId,
+                 String side) {
+
+        this.tradeId = tradeId;
+        this.account = account;
+        this.type = type;
+        this.buyQuantity = buyQuantity;
+        this.sellQuantity = sellQuantity;
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
+        this.tradeDate = tradeDate;
+        this.security = security;
+        this.status = status;
+        this.trader = trader;
+        this.benchmark = benchmark;
+        this.book = book;
+        this.creationName = creationName;
+        this.creationDate = creationDate;
+        this.revisionName = revisionName;
+        this.revisionDate = revisionDate;
+        this.dealName = dealName;
+        this.dealType = dealType;
+        this.sourceListId = sourceListId;
+        this.side = side;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "trade_id")
     private int tradeId;
 
+    @NotBlank(message = "Account is mandatory")
     @Column(name = "account")
     private String account;
 
+    @NotBlank(message = "Type is mandatory")
     @Column(name = "type")
     private String type;
 
