@@ -70,14 +70,14 @@ public class CurveControllerTest {
         assertEquals("curvePoint/list", home);
     }
 
-//    @Test
-//    @WithMockUser
-//    public void addCurvePointForm() throws Exception {
-//
-//        mockMvc.perform(get("/curvePoint/add"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("curvePoint/add"));
-//    }
+    @Test
+    @WithMockUser
+    public void testAddCurvePointForm() throws Exception {
+
+        mockMvc.perform(get("/curvePoint/add"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("curvePoint/add"));
+    }
 
     @Test
     @WithMockUser
@@ -138,15 +138,15 @@ public class CurveControllerTest {
 
         mockMvc.perform(post("/curvePoint/update/1")
                         .param("id", String.valueOf(secondPoint.getId()))
-                        .param("curveId", String.valueOf(secondPoint.getCurveId()))
+                        .param("curveId", "")
                         .param("asOfDate", String.valueOf(secondPoint.getAsOfDate()))
                         .param("term", String.valueOf(secondPoint.getTerm()))
                         .param("value", String.valueOf(secondPoint.getValue()))
                         .param("creationDate", String.valueOf(secondPoint.getCreationDate()))
                         .sessionAttr("curvePoint", firstPoint)
                         .flashAttr("bindingResult", mockResult))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/curvePoint/list"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("curvePoint/update"));
 
         verify(curveService, never()).updateCurvePoint(1, firstPoint);
     }

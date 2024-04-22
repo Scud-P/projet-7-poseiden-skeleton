@@ -17,14 +17,15 @@ public class User {
     @NotBlank(message = "Password is mandatory")
     private String password;
     @NotBlank(message = "FullName is mandatory")
-    private String fullname;
+    private String fullName;
     @NotBlank(message = "Role is mandatory")
     private String role;
 
-    public User(String username, String password, String fullName, String role) {
+    public User(Integer id, String username, String password, String fullName, String role) {
+        this.id = id;
         this.username = username;
         this.password = password;
-        this.fullname = fullName;
+        this.fullName = fullName;
         this.role = role;
     }
 
