@@ -71,16 +71,16 @@ public class DBUserControllerTest {
         when(userService.getAllUsers()).thenReturn(DBUsers);
         String home = userController.home(model);
 
-        assertEquals("user/list", home);
+        assertEquals("DBUser/list", home);
         verify(model).addAttribute("users", DBUsers);
     }
 
     @Test
     public void testAddUser() throws Exception {
 
-        mockMvc.perform(get("/user/add"))
+        mockMvc.perform(get("/DBUser/add"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/add"));
+                .andExpect(view().name("DBUser/add"));
     }
 
     @Test
@@ -89,13 +89,13 @@ public class DBUserControllerTest {
         BindingResult mockResult = mock(BindingResult.class);
         when(mockResult.hasErrors()).thenReturn(false);
 
-        mockMvc.perform(post("/user/validate")
+        mockMvc.perform(post("/DBUser/validate")
                         .param("username", firstDBUser.getUsername())
                         .param("password", firstDBUser.getPassword())
                         .param("fullName", firstDBUser.getFullName())
                         .param("role", firstDBUser.getRole()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/user/list"));
+                .andExpect(redirectedUrl("/DBUser/list"));
 
         verify(userService, times(1)).addUser(any(DBUser.class));
     }
@@ -106,13 +106,13 @@ public class DBUserControllerTest {
         BindingResult mockResult = mock(BindingResult.class);
         when(mockResult.hasErrors()).thenReturn(true);
 
-        mockMvc.perform(post("/user/validate")
+        mockMvc.perform(post("/DBUser/validate")
                         .param("username", "")
                         .param("password", firstDBUser.getPassword())
                         .param("fullName", firstDBUser.getFullName())
                         .param("role", firstDBUser.getRole()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/add"));
+                .andExpect(view().name("DBUser/add"));
 
         verify(userService, times(0)).addUser(any(DBUser.class));
 
@@ -123,9 +123,9 @@ public class DBUserControllerTest {
 
         when(userService.getUserById(anyInt())).thenReturn(firstDBUser);
 
-        mockMvc.perform(get("/user/delete/1"))
+        mockMvc.perform(get("/DBUser/delete/1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/user/list"));
+                .andExpect(redirectedUrl("/DBUser/list"));
 
         verify(userService, times(1)).deleteUserById(firstDBUser.getId());
     }
@@ -138,13 +138,13 @@ public class DBUserControllerTest {
 
         when(userService.updateUser(anyInt(), any(DBUser.class))).thenReturn(firstDBUser);
 
-        mockMvc.perform(post("/user/update/1")
-                .param("username", secondDBUser.getUsername())
-                .param("password", secondDBUser.getPassword())
-                .param("fullName", secondDBUser.getFullName())
-                .param("role", secondDBUser.getRole()))
+        mockMvc.perform(post("/DBUser/update/1")
+                        .param("username", secondDBUser.getUsername())
+                        .param("password", secondDBUser.getPassword())
+                        .param("fullName", secondDBUser.getFullName())
+                        .param("role", secondDBUser.getRole()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/user/list"));
+                .andExpect(redirectedUrl("/DBUser/list"));
 
         DBUser updatedDBUser = new DBUser(firstDBUser.getId(), secondDBUser.getUsername(), secondDBUser.getPassword(), secondDBUser.getFullName(), secondDBUser.getRole());
 
@@ -154,9 +154,9 @@ public class DBUserControllerTest {
     @Test
     public void testUpdateUserInvalidInput() throws Exception {
 
-        mockMvc.perform(post("/user/update/1"))
+        mockMvc.perform(post("/DBUser/update/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/update"));
+                .andExpect(view().name("DBUser/update"));
 
         verify(userService, times(0)).updateUser(anyInt(), any(DBUser.class));
 
@@ -167,10 +167,8 @@ public class DBUserControllerTest {
 
         when(userService.showUpdateFormForUser(firstDBUser.getId())).thenReturn(firstDBUser);
 
-        mockMvc.perform(get("/user/update/1"))
+        mockMvc.perform(get("/DBUser/update/1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/update"));
+                .andExpect(view().name("DBUser/update"));
     }
-
-
 }

@@ -23,10 +23,6 @@ public class BidListController {
 
     @Autowired
     private BidService bidService;
-
-    @Autowired
-    private SpringSecurityConfig config;
-
     @RequestMapping("/bidList/list")
     public String home(Model model)
     {

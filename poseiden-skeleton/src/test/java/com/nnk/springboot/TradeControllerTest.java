@@ -110,7 +110,7 @@ public class TradeControllerTest {
         when(tradeService.getAllTrades()).thenReturn(tradeList);
         String home = tradeController.home(model);
 
-        verify(model).addAttribute("tradeList", tradeList);
+        verify(model).addAttribute("trades", tradeList);
         assertEquals("trade/list", home);
     }
 
