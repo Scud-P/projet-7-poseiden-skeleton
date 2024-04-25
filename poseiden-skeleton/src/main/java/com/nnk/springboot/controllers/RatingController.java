@@ -27,7 +27,6 @@ public class RatingController {
 
     @RequestMapping("/rating/list")
     public String home(Model model) {
-        // TODO: find all Rating, add to model
         List<Rating> ratings = ratingRepository.findAll();
         model.addAttribute("ratings", ratings);
         return "rating/list";

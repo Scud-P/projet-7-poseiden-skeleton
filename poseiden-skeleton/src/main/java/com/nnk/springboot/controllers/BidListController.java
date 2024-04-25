@@ -1,9 +1,12 @@
 package com.nnk.springboot.controllers;
 
+import com.nnk.springboot.configuration.SpringSecurityConfig;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +23,9 @@ public class BidListController {
 
     @Autowired
     private BidService bidService;
+
+    @Autowired
+    private SpringSecurityConfig config;
 
     @RequestMapping("/bidList/list")
     public String home(Model model)

@@ -1,6 +1,6 @@
 package com.nnk.springboot.services;
 
-import com.nnk.springboot.domain.User;
+import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,48 +17,47 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserService(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
+    public DBUser addUser(DBUser DBUserToAdd) {
+        DBUserToAdd.setPassword(passwordEncoder.encode(DBUserToAdd.getPassword()));
+        userRepository.save(DBUserToAdd);
+        return DBUserToAdd;
     }
 
-    public User addUser(User userToAdd) {
-        userToAdd.setPassword(passwordEncoder.encode(userToAdd.getPassword()));
-        userRepository.save(userToAdd);
-        return userToAdd;
+    public DBUser showUpdateFormForUser(int id) {
+        DBUser DBUser =  userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
+        DBUser.setPassword("");
+        return DBUser;
     }
 
-    public User showUpdateFormForUser(int id) {
-        User user =  userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
-        user.setPassword("");
-        return user;
-    }
-
-    public User getUserById(int id) {
+    public DBUser getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
     }
 
-    public User updateUser(int id, User user) {
+    public DBUser updateUser(int id, DBUser DBUser) {
 
-        User existingUser =  getUserById(id);
+        DBUser existingDBUser =  getUserById(id);
 
-        existingUser.setRole(user.getRole());
-        existingUser.setFullName(user.getFullName());
-        existingUser.setUsername(user.getUsername());
+        existingDBUser.setRole(DBUser.getRole());
+        existingDBUser.setFullName(DBUser.getFullName());
+        existingDBUser.setUsername(DBUser.getUsername());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        existingUser.setPassword(encoder.encode(user.getPassword()));
+        existingDBUser.setPassword(encoder.encode(DBUser.getPassword()));
 
-        userRepository.save(existingUser);
+        userRepository.save(existingDBUser);
 
-        return existingUser;
+        return existingDBUser;
     }
 
     public void deleteUserById(int id) {
-        User userToDelete = getUserById(id);
-        userRepository.delete(userToDelete);
+        DBUser DBUserToDelete = getUserById(id);
+        userRepository.delete(DBUserToDelete);
     }
 
-    public List<User> getAllUsers() {
+    public List<DBUser> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public DBUser getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

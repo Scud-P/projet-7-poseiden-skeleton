@@ -49,7 +49,7 @@ public class TradeControllerTest {
     @BeforeEach
     public void setUp() {
 
-        int tradeId = 1;
+        int id = 1;
         String account = "account";
         String type = "type";
         double buyQuantity = 1.0;
@@ -71,7 +71,7 @@ public class TradeControllerTest {
         String sourceListId = "sourceListId";
         String side = "side";
 
-        int tradeId2 = 2;
+        int id2 = 2;
         String account2 = "account2";
         String type2 = "type2";
         double buyQuantity2 = 2.0;
@@ -93,11 +93,11 @@ public class TradeControllerTest {
         String sourceListId2 = "sourceListId2";
         String side2 = "side2";
 
-        firstTrade = new Trade(tradeId, account, type, buyQuantity, sellQuantity, buyPrice, sellPrice, tradeDate,
+        firstTrade = new Trade(id, account, type, buyQuantity, sellQuantity, buyPrice, sellPrice, tradeDate,
                 security, status, trader, benchmark, book, creationName, creationDate, revisionName, revisionDate,
                 dealName, dealType, sourceListId, side);
 
-        secondTrade = new Trade(tradeId2, account2, type2, buyQuantity2, sellQuantity2, buyPrice2, sellPrice2, tradeDate2,
+        secondTrade = new Trade(id2, account2, type2, buyQuantity2, sellQuantity2, buyPrice2, sellPrice2, tradeDate2,
                 security2, status2, trader2, benchmark2, book2, creationName2, creationDate2, revisionName2, revisionDate2,
                 dealName2, dealType2, sourceListId2, side2);
 
@@ -171,7 +171,7 @@ public class TradeControllerTest {
         BindingResult mockResult = mock(BindingResult.class);
         when(mockResult.hasErrors()).thenReturn(false);
 
-        when(tradeService.getTradeById(firstTrade.getTradeId())).thenReturn(firstTrade);
+        when(tradeService.getTradeById(firstTrade.getId())).thenReturn(firstTrade);
 
         mockMvc.perform(post("/trade/update/1")
                 .param("account", secondTrade.getAccount())

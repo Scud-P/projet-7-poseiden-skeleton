@@ -15,7 +15,7 @@ public class TradeTest {
     @Test
     public void testGettersAndSettersAndEqualsAndHashCodeForSameEntities() {
 
-        int tradeId = 1;
+        int id = 1;
         String account = "account";
         String type = "type";
         double buyQuantity = 1.0;
@@ -38,7 +38,7 @@ public class TradeTest {
         String side = "side";
 
         Trade firstTrade = new Trade();
-        firstTrade.setTradeId(tradeId);
+        firstTrade.setId(id);
         firstTrade.setAccount(account);
         firstTrade.setType(type);
         firstTrade.setBuyQuantity(buyQuantity);
@@ -61,7 +61,7 @@ public class TradeTest {
         firstTrade.setSide(side);
 
         Trade secondTrade = new Trade();
-        secondTrade.setTradeId(tradeId);
+        secondTrade.setId(id);
         secondTrade.setAccount(account);
         secondTrade.setType(type);
         secondTrade.setBuyQuantity(buyQuantity);
@@ -92,7 +92,7 @@ public class TradeTest {
     @Test
     public void testGettersAndSettersAndEqualsAndHashCodeForDifferentEntities() {
 
-        int tradeId = 1;
+        int id = 1;
         String account = "account";
         String type = "type";
         double buyQuantity = 1.0;
@@ -114,7 +114,7 @@ public class TradeTest {
         String sourceListId = "sourceListId";
         String side = "side";
 
-        int tradeId2 = 2;
+        int id2 = 2;
         String account2 = "account2";
         String type2 = "type2";
         double buyQuantity2 = 2.0;
@@ -137,7 +137,7 @@ public class TradeTest {
         String side2 = "side2";
 
         Trade firstTrade = new Trade();
-        firstTrade.setTradeId(tradeId2);
+        firstTrade.setId(id2);
         firstTrade.setAccount(account2);
         firstTrade.setType(type2);
         firstTrade.setBuyQuantity(buyQuantity2);
@@ -160,7 +160,7 @@ public class TradeTest {
         firstTrade.setSide(side2);
 
         Trade secondTrade = new Trade();
-        secondTrade.setTradeId(tradeId);
+        secondTrade.setId(id);
         secondTrade.setAccount(account);
         secondTrade.setType(type);
         secondTrade.setBuyQuantity(buyQuantity);

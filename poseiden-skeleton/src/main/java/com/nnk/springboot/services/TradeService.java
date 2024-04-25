@@ -22,7 +22,8 @@ public class TradeService {
     public Trade addTrade(Trade tradeToAdd) {
         Timestamp creationDate = new Timestamp(System.currentTimeMillis());
         tradeToAdd.setCreationDate(creationDate);
-        return tradeRepository.save(tradeToAdd);
+        tradeRepository.save(tradeToAdd);
+        return tradeToAdd;
     }
 
     public Trade getTradeById(Integer id) {

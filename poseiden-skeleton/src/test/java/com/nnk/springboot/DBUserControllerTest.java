@@ -1,7 +1,7 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.UserController;
-import com.nnk.springboot.domain.User;
+import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class UserControllerTest {
+public class DBUserControllerTest {
 
     @Autowired
     private UserController userController;
@@ -38,11 +38,11 @@ public class UserControllerTest {
     @Mock
     private Model model;
 
-    private static User firstUser;
+    private static DBUser firstDBUser;
 
-    private static User secondUser;
+    private static DBUser secondDBUser;
 
-    private static List<User> users;
+    private static List<DBUser> DBUsers;
 
     @BeforeEach
     public void setUp() {
@@ -59,20 +59,20 @@ public class UserControllerTest {
         String fullName2 = "fullName2";
         String role2 = "role2";
 
-        firstUser = new User(id, userName, password, fullName, role);
-        secondUser = new User(id2, userName2, password2, fullName2, role2);
+        firstDBUser = new DBUser(id, userName, password, fullName, role);
+        secondDBUser = new DBUser(id2, userName2, password2, fullName2, role2);
 
-        users = List.of(firstUser, secondUser);
+        DBUsers = List.of(firstDBUser, secondDBUser);
     }
 
     @Test
     public void testGetHome() {
 
-        when(userService.getAllUsers()).thenReturn(users);
+        when(userService.getAllUsers()).thenReturn(DBUsers);
         String home = userController.home(model);
 
         assertEquals("user/list", home);
-        verify(model).addAttribute("users", users);
+        verify(model).addAttribute("users", DBUsers);
     }
 
     @Test
@@ -90,14 +90,14 @@ public class UserControllerTest {
         when(mockResult.hasErrors()).thenReturn(false);
 
         mockMvc.perform(post("/user/validate")
-                        .param("username", firstUser.getUsername())
-                        .param("password", firstUser.getPassword())
-                        .param("fullName", firstUser.getFullName())
-                        .param("role", firstUser.getRole()))
+                        .param("username", firstDBUser.getUsername())
+                        .param("password", firstDBUser.getPassword())
+                        .param("fullName", firstDBUser.getFullName())
+                        .param("role", firstDBUser.getRole()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/user/list"));
 
-        verify(userService, times(1)).addUser(any(User.class));
+        verify(userService, times(1)).addUser(any(DBUser.class));
     }
 
     @Test
@@ -108,26 +108,26 @@ public class UserControllerTest {
 
         mockMvc.perform(post("/user/validate")
                         .param("username", "")
-                        .param("password", firstUser.getPassword())
-                        .param("fullName", firstUser.getFullName())
-                        .param("role", firstUser.getRole()))
+                        .param("password", firstDBUser.getPassword())
+                        .param("fullName", firstDBUser.getFullName())
+                        .param("role", firstDBUser.getRole()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/add"));
 
-        verify(userService, times(0)).addUser(any(User.class));
+        verify(userService, times(0)).addUser(any(DBUser.class));
 
     }
 
     @Test
     public void testDeleteUser() throws Exception {
 
-        when(userService.getUserById(anyInt())).thenReturn(firstUser);
+        when(userService.getUserById(anyInt())).thenReturn(firstDBUser);
 
         mockMvc.perform(get("/user/delete/1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/user/list"));
 
-        verify(userService, times(1)).deleteUserById(firstUser.getId());
+        verify(userService, times(1)).deleteUserById(firstDBUser.getId());
     }
 
     @Test
@@ -136,19 +136,19 @@ public class UserControllerTest {
         BindingResult mockResult = mock(BindingResult.class);
         when(mockResult.hasErrors()).thenReturn(false);
 
-        when(userService.updateUser(anyInt(), any(User.class))).thenReturn(firstUser);
+        when(userService.updateUser(anyInt(), any(DBUser.class))).thenReturn(firstDBUser);
 
         mockMvc.perform(post("/user/update/1")
-                .param("username", secondUser.getUsername())
-                .param("password", secondUser.getPassword())
-                .param("fullName", secondUser.getFullName())
-                .param("role", secondUser.getRole()))
+                .param("username", secondDBUser.getUsername())
+                .param("password", secondDBUser.getPassword())
+                .param("fullName", secondDBUser.getFullName())
+                .param("role", secondDBUser.getRole()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/user/list"));
 
-        User updatedUser = new User(firstUser.getId(), secondUser.getUsername(), secondUser.getPassword(), secondUser.getFullName(), secondUser.getRole());
+        DBUser updatedDBUser = new DBUser(firstDBUser.getId(), secondDBUser.getUsername(), secondDBUser.getPassword(), secondDBUser.getFullName(), secondDBUser.getRole());
 
-        verify(userService, times(1)).updateUser(firstUser.getId(), updatedUser);
+        verify(userService, times(1)).updateUser(firstDBUser.getId(), updatedDBUser);
     }
 
     @Test
@@ -158,14 +158,14 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/update"));
 
-        verify(userService, times(0)).updateUser(anyInt(), any(User.class));
+        verify(userService, times(0)).updateUser(anyInt(), any(DBUser.class));
 
     }
 
     @Test
     public void testShowUpdateForm() throws Exception {
 
-        when(userService.showUpdateFormForUser(firstUser.getId())).thenReturn(firstUser);
+        when(userService.showUpdateFormForUser(firstDBUser.getId())).thenReturn(firstDBUser);
 
         mockMvc.perform(get("/user/update/1"))
                 .andExpect(status().isOk())

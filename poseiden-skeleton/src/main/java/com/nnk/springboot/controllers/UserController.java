@@ -1,11 +1,9 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,50 +19,50 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/user/list")
+    @RequestMapping("/DBUser/list")
     public String home(Model model)
     {
         model.addAttribute("users", userService.getAllUsers());
-        return "user/list";
+        return "DBUser/list";
     }
 
-    @GetMapping("/user/add")
-    public String addUser(User bid) {
-        return "user/add";
+    @GetMapping("/DBUser/add")
+    public String addUser(DBUser bid) {
+        return "DBUser/add";
     }
 
-    @PostMapping("/user/validate")
-    public String validate(@Valid User user, BindingResult result, Model model) {
+    @PostMapping("/DBUser/validate")
+    public String validate(@Valid DBUser DBUser, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            userService.addUser(user);
+            userService.addUser(DBUser);
             model.addAttribute("users", userService.getAllUsers());
-            return "redirect:/user/list";
+            return "redirect:/DBUser/list";
         }
-        return "user/add";
+        return "DBUser/add";
     }
 
-    @GetMapping("/user/update/{id}")
+    @GetMapping("/DBUser/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        User user = userService.showUpdateFormForUser(id);
-        model.addAttribute("user", user);
-        return "user/update";
+        DBUser DBUser = userService.showUpdateFormForUser(id);
+        model.addAttribute("DBUser", DBUser);
+        return "DBUser/update";
     }
 
-    @PostMapping("/user/update/{id}")
-    public String updateUser(@PathVariable("id") Integer id, @Valid User user,
+    @PostMapping("/DBUser/update/{id}")
+    public String updateUser(@PathVariable("id") Integer id, @Valid DBUser DBUser,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "user/update";
+            return "DBUser/update";
         }
-        userService.updateUser(id, user);
+        userService.updateUser(id, DBUser);
         model.addAttribute("users", userService.getAllUsers());
-        return "redirect:/user/list";
+        return "redirect:/DBUser/list";
     }
 
-    @GetMapping("/user/delete/{id}")
+    @GetMapping("/DBUser/delete/{id}")
     public String deleteUser(@PathVariable("id") Integer id, Model model) {
         userService.deleteUserById(id);
         model.addAttribute("users", userService.getAllUsers());
-        return "redirect:/user/list";
+        return "redirect:/DBUser/list";
     }
 }

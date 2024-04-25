@@ -18,13 +18,13 @@ public class Trade {
     public Trade() {
     }
 
-    public Trade(int tradeId, String account, String type, double buyQuantity, double sellQuantity,
+    public Trade(int id, String account, String type, double buyQuantity, double sellQuantity,
                  double buyPrice, double sellPrice, Timestamp tradeDate, String security, String status,
                  String trader, String benchmark, String book, String creationName, Timestamp creationDate,
                  String revisionName, Timestamp revisionDate, String dealName, String dealType, String sourceListId,
                  String side) {
 
-        this.tradeId = tradeId;
+        this.id = id;
         this.account = account;
         this.type = type;
         this.buyQuantity = buyQuantity;
@@ -49,8 +49,8 @@ public class Trade {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "trade_id")
-    private int tradeId;
+    @Column(name = "id")
+    private int id;
 
     @NotBlank(message = "Account is mandatory")
     @Column(name = "account")

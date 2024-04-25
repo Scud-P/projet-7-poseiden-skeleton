@@ -10,7 +10,6 @@
 <div class="container">
 	<div class="row">
 		<div class="col-6">
-
 		</div>
 		<div class="col-6 text-right">
 			<a href="/">Home</a>&nbsp;|&nbsp;<a href="/login">Login</a>
@@ -18,7 +17,7 @@
 	</div>
 	<div class="row"><h2>User List</h2></div>
 	<div class="row">
-		<a href="/user/add" class="btn btn-primary btn-sm">Add New</a>
+		<a href="/DBUser/add" class="btn btn-primary btn-sm">Add New</a>
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -30,14 +29,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="user : ${users}">
-					<td style="width: 10%" th:text="${user.id}"></td>
-					<td th:text="${user.fullname}"></td>
-					<td th:text="${user.username}"></td>
-					<td style="width: 25%" th:text="${user.role}"></td>
+				<tr th:each="DBUser : ${users}">
+					<td style="width: 10%" th:text="${DBUser.id}"></td>
+					<td th:text="${DBUser.fullName}"></td>
+					<td th:text="${DBUser.username}"></td>
+					<td style="width: 25%" th:text="${DBUser.role}"></td>
 					<td style="width: 15%" class="text-center">
-						<a th:href="@{/user/update/{id}(id=${user.id})}">Edit</a>&nbsp;|&nbsp;
-						<a th:href="@{/user/delete/{id}(id=${user.id})}">Delete</a>
+						<a th:href="@{/DBUser/update/{id}(id=${DBUser.id})}">Edit</a>&nbsp;|&nbsp;
+						<a th:href="@{/DBUser/delete/{id}(id=${DBUser.id})}">Delete</a>
 					</td>
 				</tr>
 			</tbody>

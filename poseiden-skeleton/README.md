@@ -23,5 +23,5 @@
 3. Create controller class and place in package com.nnk.springboot.controllers
 
 ## Security
-1. Create user service to load user from  database and place in package com.nnk.springboot.services
+1. Create DBUser service to load DBUser from  database and place in package com.nnk.springboot.services
 2. Add configuration class and place in package com.nnk.springboot.config

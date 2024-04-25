@@ -34,7 +34,7 @@ public class TradeServiceTest {
     @BeforeEach
     public void setUp() {
 
-        int tradeId = 1;
+        int id = 1;
         String account = "account";
         String type = "type";
         double buyQuantity = 1.0;
@@ -56,11 +56,11 @@ public class TradeServiceTest {
         String sourceListId = "sourceListId";
         String side = "side";
 
-        trade = new Trade(tradeId, account, type, buyQuantity, sellQuantity, buyPrice, sellPrice, tradeDate,
+        trade = new Trade(id, account, type, buyQuantity, sellQuantity, buyPrice, sellPrice, tradeDate,
                 security, status, trader, benchmark, book, creationName, creationDate, revisionName, revisionDate,
                 dealName, dealType, sourceListId, side);
 
-        int tradeId2 = 2;
+        int id2 = 2;
         String account2 = "account2";
         String type2 = "type2";
         double buyQuantity2 = 2.0;
@@ -82,7 +82,7 @@ public class TradeServiceTest {
         String sourceListId2 = "sourceListId2";
         String side2 = "side2";
 
-        trade2 = new Trade(tradeId2, account2, type2, buyQuantity2, sellQuantity2, buyPrice2, sellPrice2, tradeDate2,
+        trade2 = new Trade(id2, account2, type2, buyQuantity2, sellQuantity2, buyPrice2, sellPrice2, tradeDate2,
                 security2, status2, trader2, benchmark2, book2, creationName2, creationDate2, revisionName2, revisionDate2,
                 dealName2, dealType2, sourceListId2, side2);
 
@@ -92,8 +92,8 @@ public class TradeServiceTest {
     @Test
     public void testGetTradeById() {
 
-        when(tradeRepository.findById(trade.getTradeId())).thenReturn(Optional.ofNullable(trade));
-        Trade foundTrade = tradeService.getTradeById(trade.getTradeId());
+        when(tradeRepository.findById(trade.getId())).thenReturn(Optional.ofNullable(trade));
+        Trade foundTrade = tradeService.getTradeById(trade.getId());
 
         assertEquals(foundTrade, trade);
     }
@@ -123,18 +123,18 @@ public class TradeServiceTest {
         when(tradeRepository.save(trade)).thenReturn(trade);
         Trade addedTrade = tradeService.addTrade(trade);
 
-        when(tradeRepository.findById(trade.getTradeId())).thenReturn(Optional.ofNullable(addedTrade));
+        when(tradeRepository.findById(trade.getId())).thenReturn(Optional.ofNullable(addedTrade));
 
         Trade updatedTrade = new Trade();
         updatedTrade.setAccount(trade2.getAccount());
         updatedTrade.setType(trade2.getType());
         updatedTrade.setBuyQuantity(trade2.getBuyQuantity());
 
-        Trade resultingTrade = tradeService.updateTrade(trade.getTradeId(), updatedTrade);
+        Trade resultingTrade = tradeService.updateTrade(trade.getId(), updatedTrade);
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        assertEquals(trade.getTradeId(), resultingTrade.getTradeId());
+        assertEquals(trade.getId(), resultingTrade.getId());
         assertEquals(trade2.getAccount(), resultingTrade.getAccount());
         assertEquals(trade2.getType(), resultingTrade.getType());
         assertEquals(now.getTime(), resultingTrade.getRevisionDate().getTime(), 10);
@@ -146,27 +146,27 @@ public class TradeServiceTest {
 
     @Test
     public void testUpdateTradeNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> tradeService.updateTrade(trade.getTradeId(), trade2));
+        assertThrows(IllegalArgumentException.class, () -> tradeService.updateTrade(trade.getId(), trade2));
     }
 
     @Test
     public void testDeleteFoundTrade() {
 
         when(tradeRepository.findById(anyInt())).thenReturn(Optional.ofNullable(trade));
-        tradeService.deleteTrade(trade.getTradeId());
+        tradeService.deleteTrade(trade.getId());
 
         verify(tradeRepository, times(1)).delete(trade);
     }
 
     @Test
     public void testDeleteTradeNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> tradeService.deleteTrade(trade.getTradeId()));
+        assertThrows(IllegalArgumentException.class, () -> tradeService.deleteTrade(trade.getId()));
         verify(tradeRepository, times(0)).delete(trade);
     }
 
     @Test
     public void testGetTradeByIdNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> tradeService.getTradeById(trade.getTradeId()));
+        assertThrows(IllegalArgumentException.class, () -> tradeService.getTradeById(trade.getId()));
     }
 }
 
