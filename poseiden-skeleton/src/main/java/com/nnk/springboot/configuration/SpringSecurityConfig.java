@@ -32,8 +32,9 @@ public class SpringSecurityConfig {
         return http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/admin").hasRole("ADMIN");
             auth.requestMatchers("/user").hasRole("USER");
+            auth.requestMatchers("/error").denyAll();
             auth.anyRequest().authenticated();
-        }).formLogin(Customizer.withDefaults()).build();
+        }).formLogin(Customizer.withDefaults()).exceptionHandling(configurer -> configurer.accessDeniedPage("/403")).build();
     }
 
     /**

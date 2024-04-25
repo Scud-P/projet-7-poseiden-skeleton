@@ -26,7 +26,7 @@ public class LoginController {
     public ModelAndView getAllUserArticles() {
         ModelAndView mav = new ModelAndView();
         mav.addObject("users", userRepository.findAll());
-        mav.setViewName("user/list");
+        mav.setViewName("DBUser/list");
         return mav;
     }
 
