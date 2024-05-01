@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -30,22 +31,20 @@ public class Rating {
     private int id;
 
     @Column(name = "moodysRating")
-    @NotNull
     @NotBlank(message = "moodysRating is mandatory")
     private String moodysRating;
 
     @Column(name = "sandPRating")
-    @NotNull
     @NotBlank(message = "sandPRating is mandatory")
     private String sandPRating;
 
     @Column(name = "fitchRating")
-    @NotNull
     @NotBlank(message = "fitchRating is mandatory")
     private String fitchRating;
 
-    @Column(name = "orderNumber")
+    @Digits(integer = 10, message = "Only Integers are allowed here", fraction = 0)
     @NotNull(message = "orderNumber is mandatory")
-    private Integer orderNumber;
+    @Column(name = "orderNumber")
+    private int orderNumber;
 
 }

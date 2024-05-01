@@ -1,10 +1,9 @@
 package com.nnk.springboot.domain;
 
+import jakarta.validation.constraints.Digits;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.sql.Date;
@@ -31,9 +30,11 @@ public class CurvePoint {
     @Column(name = "asOfDate")
     private Timestamp asOfDate;
 
+    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "term")
     private Double term;
 
+    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "value")
     private Double value;
 

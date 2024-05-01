@@ -52,7 +52,6 @@ public class CurveController {
         CurvePoint curvePoint = curvePointService.getCurvePointById(id);
         model.addAttribute("curvePoint", curvePoint);
 
-        // TODO: get CurvePoint by Id and to model then show to the form
         return "curvePoint/update";
     }
 
@@ -66,7 +65,6 @@ public class CurveController {
             return "redirect:/curvePoint/list";
         }
         return "curvePoint/update";
-        // TODO: check required fields, if valid call service to update Curve and return Curve list
     }
 
     @GetMapping("/curvePoint/delete/{id}")
@@ -74,7 +72,6 @@ public class CurveController {
         CurvePoint curvePoint = curvePointService.getCurvePointById(id);
         curvePointService.deleteCurvePoint(curvePoint);
         model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
-        // TODO: Find Curve by Id and delete the Curve, return to Curve list
         return "redirect:/curvePoint/list";
     }
 }

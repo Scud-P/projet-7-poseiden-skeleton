@@ -50,10 +50,11 @@ public class RatingController {
                                BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            Rating updatedRating = ratingService.updateRating(rating);
+            ratingService.updateRating(id, rating);
             model.addAttribute("ratings", ratingService.getAllRatings());
+            return "redirect:/rating/list";
         }
-        return "redirect:/rating/list";
+        return "rating/update";
     }
 
     @GetMapping("/rating/update/{id}")

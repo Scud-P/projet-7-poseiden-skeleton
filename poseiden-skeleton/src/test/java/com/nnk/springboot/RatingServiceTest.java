@@ -109,7 +109,7 @@ public class RatingServiceTest {
         ratingService.addRating(rating);
 
         when(ratingRepository.findById(updatedRating.getId())).thenReturn(Optional.of(rating));
-        Rating result = ratingService.updateRating(updatedRating);
+        Rating result = ratingService.updateRating(1, updatedRating);
 
         assertEquals(updatedOrderNumber, result.getOrderNumber());
         assertEquals(updatedSandPrRating, result.getSandPRating());
@@ -121,7 +121,7 @@ public class RatingServiceTest {
     @Test
     public void testUpdateRatingRatingNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> ratingService.updateRating(rating));
+        assertThrows(IllegalArgumentException.class, () -> ratingService.updateRating(1, rating));
         verify(ratingRepository, times(0)).save(rating);
     }
 

@@ -31,9 +31,9 @@ public class RatingService {
     }
 
     @Transactional
-    public Rating updateRating(Rating updatedRating) {
+    public Rating updateRating(Integer id, Rating updatedRating) {
 
-        Rating existingRating = ratingRepository.findById(updatedRating.getId())
+        Rating existingRating = ratingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
 
         existingRating.setMoodysRating(updatedRating.getMoodysRating());

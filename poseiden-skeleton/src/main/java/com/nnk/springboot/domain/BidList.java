@@ -4,7 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -25,13 +28,16 @@ public class BidList {
 
 
     @NotBlank(message = "Account is mandatory")
+    @Size(max = 30, message = "Account must be at most 30 characters")
     @Column(name = "account")
     private String account;
 
     @NotBlank(message = "Type is mandatory")
+    @Size(max = 30, message = "Type must be at most 30 characters")
     @Column(name = "type")
     private String type;
 
+    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "bidQuantity")
     private double bidQuantity;
     @Column(name = "askQuantity")

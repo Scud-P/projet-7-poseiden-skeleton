@@ -121,9 +121,9 @@ public class RatingControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
-        when(ratingService.updateRating(any(Rating.class))).thenReturn(firstRating);
+        when(ratingService.updateRating(1, firstRating)).thenReturn(firstRating);
 
-        verify(ratingService, times(1)).updateRating(firstRating);
+        verify(ratingService, times(1)).updateRating(1, firstRating);
 
     }
 
@@ -144,7 +144,7 @@ public class RatingControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
-        verify(ratingService, never()).updateRating(firstRating);
+        verify(ratingService, never()).updateRating(1, firstRating);
     }
 
     @Test
