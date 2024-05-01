@@ -8,21 +8,25 @@
     <link rel="stylesheet" href="../../css/bootstrap.min.css">
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
-            <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
-            <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
-            <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
-            <a href="/ruleName/list">Rule</a>
+<div class="container py-4">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <ul class="nav">
+                <li class="nav-item"><a class="nav-link" href="/bidList/list">Bid List</a></li>
+                <li class="nav-item"><a class="nav-link" href="/curvePoint/list">Curve Points</a></li>
+                <li class="nav-item"><a class="nav-link" href="/rating/list">Ratings</a></li>
+                <li class="nav-item"><a class="nav-link" href="/trade/list">Trade</a></li>
+                <li class="nav-item"><a class="nav-link" href="/ruleName/list">Rule</a></li>
+            </ul>
         </div>
-    </div>
-    <div class="col-6 text-right" sec:authorize="isAuthenticated()">
-        Logged in user: <b th:inline="text" class="user">[[${#authentication.name}]]</b>
-        <form th:action="@{/logout}" method="POST">
-            <input type="submit" value="Logout"/>
-        </form>
+        <div class="col-md-6 text-right" sec:authorize="isAuthenticated()">
+            <div class="d-flex justify-content-end align-items-center">
+                <p class="logged-in-user mb-0 mr-2">Logged in user: <b th:inline="text" class="user">[[${#authentication.name}]]</b></p>
+                <form th:action="@{/logout}" method="POST" class="form-inline">
+                    <input type="submit" value="Logout" class="btn btn-outline-danger"/>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="row"><h2>Rating List</h2></div>
     <div class="row">

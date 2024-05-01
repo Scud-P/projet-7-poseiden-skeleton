@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.sql.Timestamp;
-
 @Entity
 @Data
 @Table(name = "rating")
@@ -28,25 +26,25 @@ public class Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
 
-    @Column(name="moodysRating")
+    @Column(name = "moodysRating")
     @NotNull
     @NotBlank(message = "moodysRating is mandatory")
     private String moodysRating;
 
-    @Column(name="sandPRating")
+    @Column(name = "sandPRating")
     @NotNull
     @NotBlank(message = "sandPRating is mandatory")
     private String sandPRating;
 
-    @Column(name="fitchRating")
+    @Column(name = "fitchRating")
     @NotNull
     @NotBlank(message = "fitchRating is mandatory")
     private String fitchRating;
 
-    @Column(name="orderNumber")
+    @Column(name = "orderNumber")
     @NotNull(message = "orderNumber is mandatory")
     private Integer orderNumber;
 

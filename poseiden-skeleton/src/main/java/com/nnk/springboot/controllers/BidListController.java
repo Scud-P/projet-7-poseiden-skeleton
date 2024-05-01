@@ -1,12 +1,9 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.configuration.SpringSecurityConfig;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,15 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-
 @Controller
 public class BidListController {
 
     @Autowired
     private BidService bidService;
+
     @RequestMapping("/bidList/list")
-    public String home(Model model)
-    {
+    public String home(Model model) {
         List<BidList> bidLists = bidService.getAllBids();
         model.addAttribute("bidLists", bidLists);
         return "bidList/list";
@@ -39,7 +35,7 @@ public class BidListController {
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             bidService.addBid(bid);
             model.addAttribute("bidLists", bidService.getAllBids());
             return "redirect:/bidList/list";
@@ -57,10 +53,8 @@ public class BidListController {
 
     @PostMapping("/bidList/update/{id}")
     public String updateBid(@PathVariable("id") Integer id, @Valid BidList bidList,
-                             BindingResult result, Model model) {
-        // TODO: check required fields, if valid call service to update Bid and return list Bid
-
-        if(!result.hasErrors()) {
+                            BindingResult result, Model model) {
+        if (!result.hasErrors()) {
             bidService.updateBidList(id, bidList);
             model.addAttribute("bidLists", bidService.getAllBids());
             return "redirect:/bidList/list";

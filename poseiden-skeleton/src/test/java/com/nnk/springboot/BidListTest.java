@@ -4,7 +4,7 @@ import com.nnk.springboot.domain.BidList;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,7 +22,7 @@ public class BidListTest {
         double bid = 1.0;
         double ask = 1.0;
         String benchmark = "benchmark";
-        Date bidListDate = new Date(1000L);
+        Timestamp bidListDate = new Timestamp(1000L);
         String commentary = "commentary";
 
         BidList bidList = new BidList();
@@ -55,16 +55,32 @@ public class BidListTest {
         int id = 1;
         String account = "account";
         String type = "type";
-        double bidQty = 1.0;
-        double askQty = 1.0;
+        double bidQuantity = 1.0;
+        double askQuantity = 1.0;
         double bid = 1.0;
         double ask = 1.0;
         String benchmark = "benchmark";
-        Date bidListDate = new Date(1000L);
+        Timestamp bidListDate = new Timestamp(1000L);
         String commentary = "commentary";
+        String security = "security";
+        String status = "status";
+        String trader = "trader";
+        String book = "book";
+        String creationName = "creationName";
+        Timestamp creationDate = new Timestamp(2000L);
+        String revisionName = "revisionName";
+        Timestamp revisionDate = new Timestamp(3000L);
+        String dealName = "dealName";
+        String dealType = "dealType";
+        String sourceListId = "sourceListId";
+        String side = "side";
 
-        BidList bidList1 = new BidList(id, account, type, bidQty, askQty, bid, ask, benchmark, bidListDate, commentary);
-        BidList bidList2 = new BidList(id, account, type, bidQty, askQty, bid, ask, benchmark, bidListDate, commentary);
+
+        BidList bidList1 = new BidList(id, account, type, bidQuantity, askQuantity, bid, ask, benchmark, bidListDate, commentary,
+                security, status, trader, book, creationName, creationDate, revisionName, revisionDate, dealName, dealType, sourceListId, side);
+
+        BidList bidList2 = new BidList(id, account, type, bidQuantity, askQuantity, bid, ask, benchmark, bidListDate, commentary,
+                security, status, trader, book, creationName, creationDate, revisionName, revisionDate, dealName, dealType, sourceListId, side);
 
         assertEquals(bidList1, bidList2);
         assertEquals(bidList1.hashCode(), bidList2.hashCode());

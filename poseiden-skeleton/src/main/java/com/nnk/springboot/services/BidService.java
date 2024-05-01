@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -21,7 +21,7 @@ public class BidService {
 
     @Transactional
     public BidList addBid(BidList bid) {
-        Date date = new java.sql.Date(System.currentTimeMillis());
+        Timestamp date = new Timestamp(System.currentTimeMillis());
         bid.setBidListDate(date);
         bidListRepository.save(bid);
         return bid;
@@ -29,15 +29,14 @@ public class BidService {
 
 
     public BidList getBidById(Integer id) {
-        BidList bid = bidListRepository.findById(id).
-                orElseThrow( () -> new IllegalArgumentException("No Bid found for Id " + id));
-        return  bid;
+        return bidListRepository.findById(id).
+                orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
     }
 
     @Transactional
     public BidList updateBidList(Integer id, BidList bidList) {
         BidList existingBid = bidListRepository.findById(id)
-                .orElseThrow( () -> new IllegalArgumentException("No Bid found for Id " + id));
+                .orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
 
         existingBid.setAccount(bidList.getAccount());
         existingBid.setType(bidList.getType());
@@ -49,7 +48,7 @@ public class BidService {
     @Transactional
     public void deleteBid(BidList bidToDelete) {
         BidList existingBid = bidListRepository.findById(bidToDelete.getId()).
-                orElseThrow( () -> new IllegalArgumentException("No Bid found for Id"));
+                orElseThrow(() -> new IllegalArgumentException("No Bid found for Id"));
         bidListRepository.delete(existingBid);
     }
 }

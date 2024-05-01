@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,10 +40,24 @@ public class BidListServiceTest {
         double bid = 1.0;
         double ask = 1.0;
         String benchmark = "benchmark";
-        Date bidListDate = new Date(1000L);
+        Timestamp bidListDate = new Timestamp(1000L);
         String commentary = "commentary";
+        String security = "security";
+        String status = "status";
+        String trader = "trader";
+        String book = "book";
+        String creationName = "creationName";
+        Timestamp creationDate = new Timestamp(2000L);
+        String revisionName = "revisionName";
+        Timestamp revisionDate = new Timestamp(3000L);
+        String dealName = "dealName";
+        String dealType = "dealType";
+        String sourceListId = "sourceListId";
+        String side = "side";
 
-        bidList = new BidList(id, account, type, bidQuantity, askQuantity, bid, ask, benchmark, bidListDate, commentary);
+
+        bidList = new BidList(id, account, type, bidQuantity, askQuantity, bid, ask, benchmark, bidListDate, commentary,
+                security, status, trader, book, creationName, creationDate, revisionName, revisionDate, dealName, dealType, sourceListId, side);
     }
 
     @Test

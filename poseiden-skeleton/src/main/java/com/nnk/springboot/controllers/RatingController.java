@@ -2,7 +2,6 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.services.RatingService;
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.RatingRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,12 +21,10 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
-    @Autowired
-    private RatingRepository ratingRepository;
 
     @RequestMapping("/rating/list")
     public String home(Model model) {
-        List<Rating> ratings = ratingRepository.findAll();
+        List<Rating> ratings = ratingService.getAllRatings();
         model.addAttribute("ratings", ratings);
         return "rating/list";
     }
@@ -40,24 +37,22 @@ public class RatingController {
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             ratingService.addRating(rating);
-            model.addAttribute("ratings", ratingRepository.findAll());
+            model.addAttribute("ratings", ratingService.getAllRatings());
             return "redirect:/rating/list";
         }
         return "rating/add";
-        // TODO: check data valid and save to db, after saving return Rating list
     }
 
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") Integer id, @Valid Rating rating,
                                BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             Rating updatedRating = ratingService.updateRating(rating);
-            model.addAttribute("ratings", updatedRating);
+            model.addAttribute("ratings", ratingService.getAllRatings());
         }
-        // TODO: check required fields, if valid call service to update Rating and return Rating list
         return "redirect:/rating/list";
     }
 
@@ -65,7 +60,6 @@ public class RatingController {
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Rating rating = ratingService.getRatingById(id);
         model.addAttribute("rating", rating);
-        // TODO: get Rating by Id and to model then show to the form
         return "rating/update";
     }
 
@@ -74,8 +68,7 @@ public class RatingController {
     public String deleteRating(@PathVariable("id") Integer id, Model model) {
         Rating rating = ratingService.getRatingById(id);
         ratingService.deleteRating(rating);
-
-        // TODO: Find Rating by Id and delete the Rating, return to Rating list
+        model.addAttribute("ratings", ratingService.getAllRatings());
         return "redirect:/rating/list";
     }
 }

@@ -1,4 +1,4 @@
-package com.nnk.springboot.configuration;
+package com.nnk.springboot.security;
 
 import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.repositories.UserRepository;
@@ -26,6 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Retrieves user details from the database based on the provided username.
+     *
      * @param username The username for which user details are to be retrieved.
      * @return UserDetails object representing the user.
      * @throws UsernameNotFoundException Thrown if the user with the specified username is not found.
@@ -35,8 +36,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         DBUser user = userRepository.findByUsername(username);
         return new User(user.getUsername(), user.getPassword(), getGrantedAuthorities(user.getRole()));
     }
+
     /**
      * Retrieves the authorities based on the roles granted to the user.
+     *
      * @param role The role of the user.
      * @return List of GrantedAuthority objects representing the user's roles.
      */

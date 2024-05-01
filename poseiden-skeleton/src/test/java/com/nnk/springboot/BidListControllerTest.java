@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,9 +40,6 @@ public class BidListControllerTest {
     @MockBean
     private BidService bidService;
 
-    @MockBean
-    private BidListRepository bidRepository;
-
     @Mock
     private Model model;
 
@@ -53,13 +51,20 @@ public class BidListControllerTest {
     @BeforeEach
     public void setUp() {
 
-        Date firstDate = new Date(1000L);
-        Date secondDate = new Date(2000L);
+        Timestamp firstDate = new Timestamp(1000L);
+        Timestamp secondDate = new Timestamp(1000L);
+
+
 
         firstList = new BidList
-                (1, "account", "type", 1, 1, 1, 1, "benchmark", firstDate, "commentary");
+                (1, "account", "type", 1, 1, 1, 1, "benchmark", firstDate, "commentary",
+                        "security", "status", "trader", "book", "creationName", firstDate, "revisionName",
+                        secondDate, "dealName", "dealType", "sourceListId", "side" );
+
         secondList = new BidList
-                (2, "account2", "type2", 2, 2, 2, 2, "benchmark2", secondDate, "commentary2");
+                (2, "account2", "type2", 2, 2, 2, 2, "benchmark2", firstDate, "commentary2",
+                        "security2", "status2", "trader2", "book2", "creationName2", firstDate, "revisionName2",
+                        secondDate, "dealName2", "dealType2", "sourceListId2", "side2" );
 
         bidLists = List.of(firstList, secondList);
     }

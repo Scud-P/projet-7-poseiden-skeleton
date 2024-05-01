@@ -1,4 +1,4 @@
-package com.nnk.springboot.configuration;
+package com.nnk.springboot.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +23,7 @@ public class SpringSecurityConfig {
 
     /**
      * Configures the security filter chain.
+     *
      * @param http The HttpSecurity object to configure.
      * @return The configured SecurityFilterChain.
      * @throws Exception If an error occurs during configuration.
@@ -39,6 +40,7 @@ public class SpringSecurityConfig {
 
     /**
      * Creates a BCryptPasswordEncoder bean.
+     *
      * @return A BCryptPasswordEncoder instance.
      */
     @Bean
@@ -48,7 +50,8 @@ public class SpringSecurityConfig {
 
     /**
      * Creates an AuthenticationManager bean.
-     * @param http The HttpSecurity object.
+     *
+     * @param http                  The HttpSecurity object.
      * @param bCryptPasswordEncoder The BCryptPasswordEncoder instance.
      * @return The created AuthenticationManager.
      * @throws Exception If an error occurs during creation.

@@ -1,7 +1,6 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.services.CurvePointService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +18,13 @@ import java.util.List;
 public class CurveController {
 
     @Autowired
-    private CurvePointRepository curvePointRepository;
-
-    @Autowired
     private CurvePointService curvePointService;
 
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
-
-        List<CurvePoint> curvePoints = curvePointRepository.findAll();
+        List<CurvePoint> curvePoints = curvePointService.getAllCurvePoints();
+        System.out.println(curvePoints);
         model.addAttribute("curvePoints", curvePoints);
-        // TODO: find all Curve Point, add to model
         return "curvePoint/list";
     }
 
@@ -41,9 +36,9 @@ public class CurveController {
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             curvePointService.addCurvePoint(curvePoint);
-            model.addAttribute("curvePoints", curvePointRepository.findAll());
+            model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
             return "redirect:/curvePoint/list";
         }
 
@@ -63,11 +58,11 @@ public class CurveController {
 
     @PostMapping("/curvePoint/update/{id}")
     public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
-                            BindingResult result, Model model) {
+                                   BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             curvePointService.updateCurvePoint(id, curvePoint);
-            model.addAttribute("curvePoints", curvePointRepository.findAll());
+            model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
             return "redirect:/curvePoint/list";
         }
         return "curvePoint/update";

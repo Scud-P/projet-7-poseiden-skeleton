@@ -1,7 +1,6 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.repositories.TradeRepository;
 import com.nnk.springboot.services.TradeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,6 @@ public class TradeController {
     public String deleteTrade(@PathVariable("id") Integer id, Model model) {
         tradeService.deleteTrade(id);
         model.addAttribute("trades", tradeService.getAllTrades());
-        // TODO: Find Trade by Id and delete the Trade, return to Trade list
         return "redirect:/trade/list";
     }
 }

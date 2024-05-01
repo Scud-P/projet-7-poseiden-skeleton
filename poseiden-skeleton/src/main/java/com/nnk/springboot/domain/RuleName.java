@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import java.sql.Timestamp;
-
 @Entity
 @Data
 @Table(name = "rulename")

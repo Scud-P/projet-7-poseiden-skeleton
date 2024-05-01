@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 
 @Controller
 public class UserController {
@@ -20,9 +22,9 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("/DBUser/list")
-    public String home(Model model)
-    {
-        model.addAttribute("users", userService.getAllUsers());
+    public String home(Model model) {
+        List<DBUser> users = userService.getAllUsers();
+        model.addAttribute("users", users);
         return "DBUser/list";
     }
 

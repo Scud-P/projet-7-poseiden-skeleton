@@ -28,9 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RatingControllerTest {
 
     @MockBean
-    private RatingRepository ratingRepository;
-
-    @MockBean
     private RatingService ratingService;
 
     @Autowired
@@ -62,7 +59,7 @@ public class RatingControllerTest {
     @Test
     public void testHome() {
 
-        when(ratingRepository.findAll()).thenReturn(ratings);
+        when(ratingService.getAllRatings()).thenReturn(ratings);
 
         String home = ratingController.home(model);
 

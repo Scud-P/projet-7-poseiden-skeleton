@@ -12,7 +12,7 @@ import java.util.List;
 public class UserService {
 
     @Autowired
-    private  BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -24,7 +24,7 @@ public class UserService {
     }
 
     public DBUser showUpdateFormForUser(int id) {
-        DBUser DBUser =  userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
+        DBUser DBUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
         DBUser.setPassword("");
         return DBUser;
     }
@@ -35,7 +35,7 @@ public class UserService {
 
     public DBUser updateUser(int id, DBUser DBUser) {
 
-        DBUser existingDBUser =  getUserById(id);
+        DBUser existingDBUser = getUserById(id);
 
         existingDBUser.setRole(DBUser.getRole());
         existingDBUser.setFullName(DBUser.getFullName());

@@ -1,13 +1,32 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <title> Spring Boot </title>
-    <link rel="stylesheet" href="/css/styles.css"/>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
 </head>
-<body>
-<h3> HOME PAGE </h3>
-<p>
-    <a href="/login">Login</a> or create one <a href="/DBUser/list">User management</a>
-</p>
-</body>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
+            <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
+            <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
+            <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
+            <a href="/ruleName/list">Rule</a>
+        </div>
+        <div class="col-6 text-right" sec:authorize="isAuthenticated()">
+            Logged in user: <b th:inline="text" class="user">[[${#authentication.name}]]</b>
+            <form th:action="@{/logout}" method="POST">
+                <input type="submit" value="Logout"/>
+            </form>
+            </div>
+        </div>
+    </div>
+    <body>
+    <h3> HOME PAGE </h3>
+    <p>
+        <a href="/login">Login</a> or create one <a href="/DBUser/list">User management</a>
+    </p>
+    </body>
 </html>

@@ -17,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -49,13 +48,13 @@ public class DBUserControllerTest {
 
         Integer id = 1;
         String userName = "userName";
-        String password = "password";
+        String password = "P4ssW0rd!";
         String fullName = "fullName";
         String role = "role";
 
         Integer id2 = 2;
         String userName2 = "userName2";
-        String password2 = "password2";
+        String password2 = "P4ssW0rd!2";
         String fullName2 = "fullName2";
         String role2 = "role2";
 
@@ -115,7 +114,23 @@ public class DBUserControllerTest {
                 .andExpect(view().name("DBUser/add"));
 
         verify(userService, times(0)).addUser(any(DBUser.class));
+    }
 
+    @Test
+    public void testValidateUserInvalidPasswordRegex() throws Exception {
+
+        BindingResult mockResult = mock(BindingResult.class);
+        when(mockResult.hasErrors()).thenReturn(true);
+
+        mockMvc.perform(post("/DBUser/validate")
+                        .param("username", firstDBUser.getUsername())
+                        .param("password", "password")
+                        .param("fullName", firstDBUser.getFullName())
+                        .param("role", firstDBUser.getRole()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("DBUser/add"));
+
+        verify(userService, times(0)).addUser(any(DBUser.class));
     }
 
     @Test

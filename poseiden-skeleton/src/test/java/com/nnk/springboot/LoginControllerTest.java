@@ -24,6 +24,7 @@ public class LoginControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+
     @Test
     @WithMockUser
     public void testError() throws Exception {
