@@ -2,9 +2,11 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.repositories.UserRepository;
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,7 +19,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public DBUser addUser(DBUser DBUserToAdd) {
+    @Transactional
+    public DBUser addUser(@Nonnull DBUser DBUserToAdd) {
         DBUserToAdd.setPassword(passwordEncoder.encode(DBUserToAdd.getPassword()));
         userRepository.save(DBUserToAdd);
         return DBUserToAdd;
@@ -33,6 +36,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
     }
 
+    @Transactional
     public DBUser updateUser(int id, DBUser DBUser) {
 
         DBUser existingDBUser = getUserById(id);
@@ -48,6 +52,7 @@ public class UserService {
         return existingDBUser;
     }
 
+    @Transactional
     public void deleteUserById(int id) {
         DBUser DBUserToDelete = getUserById(id);
         userRepository.delete(DBUserToDelete);

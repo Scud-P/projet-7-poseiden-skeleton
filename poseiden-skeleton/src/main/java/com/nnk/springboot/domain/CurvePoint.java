@@ -1,22 +1,22 @@
 package com.nnk.springboot.domain;
 
 import jakarta.validation.constraints.Digits;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "curvepoint")
 public class CurvePoint {
-
-    public CurvePoint() {
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,14 +40,5 @@ public class CurvePoint {
 
     @Column(name = "creationDate")
     private Timestamp creationDate;
-
-    public CurvePoint(int id, Integer curveId, Timestamp asOfDate, Double term, Double value, Timestamp creationDate) {
-        this.id = id;
-        this.curveId = curveId;
-        this.asOfDate = asOfDate;
-        this.term = term;
-        this.value = value;
-        this.creationDate = creationDate;
-    }
 
 }

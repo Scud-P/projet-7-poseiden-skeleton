@@ -46,6 +46,7 @@ public class CurvePointService {
         return  optionalCurvePoint.orElseThrow(() -> new IllegalArgumentException("Invalid Id"));
     }
 
+    @Transactional
     public void deleteCurvePoint(CurvePoint curvePointToDelete) {
         CurvePoint existingCurvePoint = curvePointRepository.findById(curvePointToDelete.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Id"));

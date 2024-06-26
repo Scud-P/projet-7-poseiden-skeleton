@@ -7,23 +7,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "rating")
 public class Rating {
-
-    public Rating(int id, String moodysRating, String sandPRating, String fitchRating, int orderNumber) {
-        this.id = id;
-        this.moodysRating = moodysRating;
-        this.sandPRating = sandPRating;
-        this.fitchRating = fitchRating;
-        this.orderNumber = orderNumber;
-    }
-
-    public Rating() {
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,6 +8,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -29,13 +31,21 @@ public class SpringSecurityConfig {
      * @throws Exception If an error occurs during configuration.
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/admin").hasRole("ADMIN");
-            auth.requestMatchers("/user").hasRole("USER");
-            auth.requestMatchers("/error").denyAll();
-            auth.anyRequest().authenticated();
-        }).formLogin(Customizer.withDefaults()).exceptionHandling(configurer -> configurer.accessDeniedPage("/403")).build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/DBUser/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .logout(LogoutConfigurer::permitAll
+                )
+                .exceptionHandling(handling -> handling
+                        .accessDeniedPage("/403") // Redirect to /403 on access denied
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(Customizer.withDefaults()).exceptionHandling(configurer -> configurer.accessDeniedPage("/403"));
+        return http.build();
     }
 
     /**

@@ -4,6 +4,7 @@ import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -19,6 +20,7 @@ public class TradeService {
         return tradeRepository.findAll();
     }
 
+    @Transactional
     public Trade addTrade(Trade tradeToAdd) {
         Timestamp creationDate = new Timestamp(System.currentTimeMillis());
         tradeToAdd.setCreationDate(creationDate);
@@ -30,7 +32,7 @@ public class TradeService {
         return tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
     }
 
-
+    @Transactional
     public Trade updateTrade(Integer id, Trade trade) {
 
         Trade tradeToUpdate = tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
@@ -42,6 +44,7 @@ public class TradeService {
         return tradeToUpdate;
     }
 
+    @Transactional
     public void deleteTrade(Integer id) {
         Trade tradeToDelete = tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
         tradeRepository.delete(tradeToDelete);

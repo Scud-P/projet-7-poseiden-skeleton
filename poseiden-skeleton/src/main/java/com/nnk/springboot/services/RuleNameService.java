@@ -5,6 +5,7 @@ import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class RuleNameService {
     }
 
 
+    @Transactional
     public RuleName addRuleName(RuleName ruleNameToAdd) {
         return ruleNameRepository.save(ruleNameToAdd);
     }
@@ -27,6 +29,7 @@ public class RuleNameService {
         return ruleNameRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No ruleName found for ID " + id));
     }
 
+    @Transactional
     public RuleName updateRuleName(Integer id, RuleName ruleNameToUpdate) {
         RuleName existingRuleName = ruleNameRepository.findById(id)
                 .orElseThrow( () -> new IllegalArgumentException("No ruleName found"));
@@ -40,6 +43,7 @@ public class RuleNameService {
         return existingRuleName;
     }
 
+    @Transactional
     public void deleteRuleName(RuleName ruleNameToDelete) {
         RuleName existingRuleName = getRuleNameById(ruleNameToDelete.getId());
         ruleNameRepository.delete(existingRuleName);

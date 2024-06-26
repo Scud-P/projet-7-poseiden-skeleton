@@ -3,11 +3,15 @@ package com.nnk.springboot.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DBUser {
 
     @Id
@@ -28,16 +32,4 @@ public class DBUser {
     @Column(name = "role")
     @NotBlank(message = "Role is mandatory")
     private String role;
-
-    public DBUser(Integer id, String username, String password, String fullName, String role) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.fullName = fullName;
-        this.role = role;
-    }
-
-    public DBUser() {
-
-    }
 }

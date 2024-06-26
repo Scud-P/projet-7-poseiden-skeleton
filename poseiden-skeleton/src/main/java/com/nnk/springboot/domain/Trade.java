@@ -5,47 +5,20 @@ import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "trade")
 public class Trade {
-
-    public Trade() {
-    }
-
-    public Trade(int id, String account, String type, double buyQuantity, double sellQuantity,
-                 double buyPrice, double sellPrice, Timestamp tradeDate, String security, String status,
-                 String trader, String benchmark, String book, String creationName, Timestamp creationDate,
-                 String revisionName, Timestamp revisionDate, String dealName, String dealType, String sourceListId,
-                 String side) {
-
-        this.id = id;
-        this.account = account;
-        this.type = type;
-        this.buyQuantity = buyQuantity;
-        this.sellQuantity = sellQuantity;
-        this.buyPrice = buyPrice;
-        this.sellPrice = sellPrice;
-        this.tradeDate = tradeDate;
-        this.security = security;
-        this.status = status;
-        this.trader = trader;
-        this.benchmark = benchmark;
-        this.book = book;
-        this.creationName = creationName;
-        this.creationDate = creationDate;
-        this.revisionName = revisionName;
-        this.revisionDate = revisionDate;
-        this.dealName = dealName;
-        this.dealType = dealType;
-        this.sourceListId = sourceListId;
-        this.side = side;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,10 +26,12 @@ public class Trade {
     private int id;
 
     @NotBlank(message = "Account is mandatory")
+    @Size(max = 30, message = "Account must be at most 30 characters")
     @Column(name = "account")
     private String account;
 
     @NotBlank(message = "Type is mandatory")
+    @Size(max = 30, message = "Type must be at most 30 characters")
     @Column(name = "type")
     private String type;
 

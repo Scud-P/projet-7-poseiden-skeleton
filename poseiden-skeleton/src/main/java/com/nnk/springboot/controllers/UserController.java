@@ -4,6 +4,8 @@ import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,13 +25,26 @@ public class UserController {
 
     @RequestMapping("/DBUser/list")
     public String home(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        System.out.println(isAdmin);
+
+        if (!isAdmin) {
+            // Redirect to the 403 page if not admin
+            return "redirect:/403";
+        }
+
+        // If admin, proceed to fetch and display users
         List<DBUser> users = userService.getAllUsers();
         model.addAttribute("users", users);
         return "DBUser/list";
     }
 
     @GetMapping("/DBUser/add")
-    public String addUser(DBUser bid) {
+    public String addUser(DBUser user) {
         return "DBUser/add";
     }
 

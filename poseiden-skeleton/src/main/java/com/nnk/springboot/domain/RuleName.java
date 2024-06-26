@@ -5,24 +5,16 @@ import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "rulename")
 public class RuleName {
-    public RuleName(int id, String name, String description, String json, String template, String sqlStr, String sqlPart) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.json = json;
-        this.template = template;
-        this.sqlStr = sqlStr;
-        this.sqlPart = sqlPart;
-    }
-
-    public RuleName() {
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
