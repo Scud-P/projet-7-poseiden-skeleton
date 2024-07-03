@@ -165,7 +165,7 @@ public class BidListControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/bidList/list"));
 
-        verify(bidService, times(1)).deleteBid(firstList);
+        verify(bidService, times(1)).deleteBid(firstList.getId());
     }
 
 }

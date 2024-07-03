@@ -86,14 +86,14 @@ public class BidListServiceTest {
         bidService.addBid(bidList);
         when(bidListRepository.findById(bidList.getId())).thenReturn(Optional.ofNullable(bidList));
 
-        bidService.deleteBid(bidList);
+        bidService.deleteBid(bidList.getId());
 
         verify(bidListRepository, times(1)).delete(bidList);
     }
 
     @Test
     public void testDeleteBidNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> bidService.deleteBid(bidList));
+        assertThrows(IllegalArgumentException.class, () -> bidService.deleteBid(bidList.getId()));
         verify(bidListRepository, never()).delete(any(BidList.class));
     }
 

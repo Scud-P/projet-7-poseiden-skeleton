@@ -28,14 +28,13 @@ public class TradeService {
         return tradeToAdd;
     }
 
-    public Trade getTradeById(Integer id) {
+    public Trade getTradeById(int id) {
         return tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
     }
 
     @Transactional
-    public Trade updateTrade(Integer id, Trade trade) {
-
-        Trade tradeToUpdate = tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
+    public Trade updateTrade(int id, Trade trade) {
+        Trade tradeToUpdate = getTradeById(id);
         tradeToUpdate.setAccount(trade.getAccount());
         tradeToUpdate.setType(trade.getType());
         tradeToUpdate.setBuyQuantity(trade.getBuyQuantity());
@@ -45,8 +44,8 @@ public class TradeService {
     }
 
     @Transactional
-    public void deleteTrade(Integer id) {
-        Trade tradeToDelete = tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
+    public void deleteTrade(int id) {
+        Trade tradeToDelete = getTradeById(id);
         tradeRepository.delete(tradeToDelete);
     }
 }

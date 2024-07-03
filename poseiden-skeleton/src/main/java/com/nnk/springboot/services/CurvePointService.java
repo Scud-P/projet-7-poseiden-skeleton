@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CurvePointService {
@@ -28,9 +27,8 @@ public class CurvePointService {
 
     @Transactional
     public CurvePoint updateCurvePoint(Integer id, CurvePoint updatedCurvePoint) {
-        CurvePoint existingCurvePoint = curvePointRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid CurvePoint ID: " + id));
 
+        CurvePoint existingCurvePoint = getCurvePointById(id);
         existingCurvePoint.setCurveId(updatedCurvePoint.getCurveId());
         existingCurvePoint.setTerm(updatedCurvePoint.getTerm());
         existingCurvePoint.setValue(updatedCurvePoint.getValue());
@@ -42,14 +40,13 @@ public class CurvePointService {
     }
 
     public CurvePoint getCurvePointById(int id) {
-        Optional<CurvePoint> optionalCurvePoint = curvePointRepository.findById(id);
-        return  optionalCurvePoint.orElseThrow(() -> new IllegalArgumentException("Invalid Id"));
+        return curvePointRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Id"));
     }
 
     @Transactional
-    public void deleteCurvePoint(CurvePoint curvePointToDelete) {
-        CurvePoint existingCurvePoint = curvePointRepository.findById(curvePointToDelete.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Id"));
+    public void deleteCurvePoint(int id) {
+        CurvePoint existingCurvePoint = getCurvePointById(id);
         curvePointRepository.delete(existingCurvePoint);
     }
 

@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public DBUser showUpdateFormForUser(int id) {
-        DBUser DBUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found for Id " + id));
+        DBUser DBUser = getUserById(id);
         DBUser.setPassword("");
         return DBUser;
     }

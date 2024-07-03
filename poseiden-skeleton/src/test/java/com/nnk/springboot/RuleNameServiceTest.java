@@ -132,7 +132,7 @@ public class RuleNameServiceTest {
         ruleNameService.addRuleName(firstRuleName);
 
         when(ruleNameRepository.findById(firstRuleName.getId())).thenReturn(Optional.ofNullable(firstRuleName));
-        ruleNameService.deleteRuleName(firstRuleName);
+        ruleNameService.deleteRuleName(firstRuleName.getId());
 
         verify(ruleNameRepository, times(1)).delete(firstRuleName);
     }

@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -69,9 +66,14 @@ public class CurveController {
 
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteCurvePoint(@PathVariable("id") Integer id, Model model) {
-        CurvePoint curvePoint = curvePointService.getCurvePointById(id);
-        curvePointService.deleteCurvePoint(curvePoint);
+        curvePointService.deleteCurvePoint(id);
         model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
         return "redirect:/curvePoint/list";
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+        return "error";
     }
 }

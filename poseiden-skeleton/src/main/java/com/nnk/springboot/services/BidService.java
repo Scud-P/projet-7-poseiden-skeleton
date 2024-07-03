@@ -28,27 +28,23 @@ public class BidService {
     }
 
 
-    public BidList getBidById(Integer id) {
+    public BidList getBidById(int id) {
         return bidListRepository.findById(id).
                 orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
     }
 
     @Transactional
-    public BidList updateBidList(Integer id, BidList bidList) {
-        BidList existingBid = bidListRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
-
+    public BidList updateBidList(int id, BidList bidList) {
+        BidList existingBid = getBidById(id);
         existingBid.setAccount(bidList.getAccount());
         existingBid.setType(bidList.getType());
         existingBid.setBidQuantity(bidList.getBidQuantity());
-
         return existingBid;
     }
 
     @Transactional
-    public void deleteBid(BidList bidToDelete) {
-        BidList existingBid = bidListRepository.findById(bidToDelete.getId()).
-                orElseThrow(() -> new IllegalArgumentException("No Bid found for Id"));
+    public void deleteBid(int id) {
+        BidList existingBid = getBidById(id);
         bidListRepository.delete(existingBid);
     }
 }

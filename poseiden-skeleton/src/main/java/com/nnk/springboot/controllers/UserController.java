@@ -9,10 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,14 +27,9 @@ public class UserController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
-        System.out.println(isAdmin);
-
         if (!isAdmin) {
-            // Redirect to the 403 page if not admin
             return "redirect:/403";
         }
-
-        // If admin, proceed to fetch and display users
         List<DBUser> users = userService.getAllUsers();
         model.addAttribute("users", users);
         return "DBUser/list";
@@ -81,5 +73,11 @@ public class UserController {
         userService.deleteUserById(id);
         model.addAttribute("users", userService.getAllUsers());
         return "redirect:/DBUser/list";
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+        return "error";
     }
 }

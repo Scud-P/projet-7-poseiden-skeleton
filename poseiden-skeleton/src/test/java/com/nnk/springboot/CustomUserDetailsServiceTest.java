@@ -45,7 +45,7 @@ public class CustomUserDetailsServiceTest {
         User resultUserDetails = (User) customUserDetailsService.loadUserByUsername(username);
 
         List<GrantedAuthority> expectedAuthorities = new ArrayList<>();
-        expectedAuthorities.add(new SimpleGrantedAuthority("Role_" + role));
+        expectedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
 
         assertEquals(testUser.getUsername(), resultUserDetails.getUsername());
         assertEquals(testUser.getPassword(), resultUserDetails.getPassword());
@@ -64,16 +64,15 @@ public class CustomUserDetailsServiceTest {
         List<GrantedAuthority> actualAuthorities = getGrantedAuthorities(role);
 
         List<GrantedAuthority> expectedAuthorities = new ArrayList<>();
-        expectedAuthorities.add(new SimpleGrantedAuthority("Role_" + role));
+        expectedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
 
         assertEquals(expectedAuthorities, actualAuthorities);
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(String role) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("Role_" + role));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         return authorities;
     }
-
 }
 

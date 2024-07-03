@@ -166,7 +166,7 @@ public class RatingControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
-        verify(ratingService, times(1)).deleteRating(firstRating);
+        verify(ratingService, times(1)).deleteRating(firstRating.getId());
     }
 
 }

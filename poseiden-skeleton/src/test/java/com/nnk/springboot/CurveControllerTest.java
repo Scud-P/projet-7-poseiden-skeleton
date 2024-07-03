@@ -173,7 +173,7 @@ public class CurveControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/curvePoint/list"));
 
-        verify(curveService, times(1)).deleteCurvePoint(firstPoint);
+        verify(curveService, times(1)).deleteCurvePoint(firstPoint.getId());
     }
 
 }

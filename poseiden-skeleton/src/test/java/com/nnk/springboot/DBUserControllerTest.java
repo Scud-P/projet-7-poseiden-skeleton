@@ -10,6 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,6 +48,12 @@ public class DBUserControllerTest {
 
     private static List<DBUser> DBUsers;
 
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
+
     @BeforeEach
     public void setUp() {
 
@@ -62,10 +73,16 @@ public class DBUserControllerTest {
         secondDBUser = new DBUser(id2, userName2, password2, fullName2, role2);
 
         DBUsers = List.of(firstDBUser, secondDBUser);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
     public void testGetHome() {
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        when(authentication.getAuthorities()).thenAnswer(invocation -> authorities);
 
         when(userService.getAllUsers()).thenReturn(DBUsers);
         String home = userController.home(model);

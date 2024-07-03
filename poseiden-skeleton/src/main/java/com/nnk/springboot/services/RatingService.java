@@ -26,16 +26,14 @@ public class RatingService {
     }
 
     public Rating getRatingById(int id) {
-        Optional<Rating> optionalRating = ratingRepository.findById(id);
-        return optionalRating.orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
+        return ratingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
     }
 
     @Transactional
-    public Rating updateRating(Integer id, Rating updatedRating) {
+    public Rating updateRating(int id, Rating updatedRating) {
 
-        Rating existingRating = ratingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
-
+        Rating existingRating = getRatingById(id);
         existingRating.setMoodysRating(updatedRating.getMoodysRating());
         existingRating.setSandPRating(updatedRating.getSandPRating());
         existingRating.setFitchRating(updatedRating.getFitchRating());
@@ -47,9 +45,8 @@ public class RatingService {
     }
 
     @Transactional
-    public void deleteRating(Rating ratingToDelete) {
-        Rating existingRating = ratingRepository.findById(ratingToDelete.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rating id"));
+    public void deleteRating(int id) {
+        Rating existingRating = getRatingById(id);
         ratingRepository.delete(existingRating);
     }
 }

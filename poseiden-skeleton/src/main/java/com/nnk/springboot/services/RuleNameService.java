@@ -19,20 +19,18 @@ public class RuleNameService {
         return ruleNameRepository.findAll();
     }
 
-
     @Transactional
     public RuleName addRuleName(RuleName ruleNameToAdd) {
         return ruleNameRepository.save(ruleNameToAdd);
     }
 
-    public RuleName getRuleNameById(Integer id) {
+    public RuleName getRuleNameById(int id) {
         return ruleNameRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No ruleName found for ID " + id));
     }
 
     @Transactional
-    public RuleName updateRuleName(Integer id, RuleName ruleNameToUpdate) {
-        RuleName existingRuleName = ruleNameRepository.findById(id)
-                .orElseThrow( () -> new IllegalArgumentException("No ruleName found"));
+    public RuleName updateRuleName(int id, RuleName ruleNameToUpdate) {
+        RuleName existingRuleName = getRuleNameById(id);
         existingRuleName.setName(ruleNameToUpdate.getName());
         existingRuleName.setDescription(ruleNameToUpdate.getDescription());
         existingRuleName.setJson(ruleNameToUpdate.getJson());
@@ -44,8 +42,8 @@ public class RuleNameService {
     }
 
     @Transactional
-    public void deleteRuleName(RuleName ruleNameToDelete) {
-        RuleName existingRuleName = getRuleNameById(ruleNameToDelete.getId());
+    public void deleteRuleName(int id) {
+        RuleName existingRuleName = getRuleNameById(id);
         ruleNameRepository.delete(existingRuleName);
     }
 }

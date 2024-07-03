@@ -170,6 +170,6 @@ public class RuleNameControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/ruleName/list"));
 
-        verify(ruleNameService, times(1)).deleteRuleName(firstRuleName);
+        verify(ruleNameService, times(1)).deleteRuleName(firstRuleName.getId());
     }
 }

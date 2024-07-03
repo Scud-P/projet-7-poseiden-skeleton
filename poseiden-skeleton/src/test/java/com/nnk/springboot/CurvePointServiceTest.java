@@ -95,7 +95,7 @@ public class CurvePointServiceTest {
         curvePointService.addCurvePoint(curvePoint);
         when(curvePointRepository.findById(curvePoint.getId())).thenReturn(Optional.ofNullable(curvePoint));
 
-        curvePointService.deleteCurvePoint(curvePoint);
+        curvePointService.deleteCurvePoint(curvePoint.getId());
 
         verify(curvePointRepository, times(1)).delete(curvePoint);
     }
@@ -103,7 +103,7 @@ public class CurvePointServiceTest {
     @Test
     public void testDeleteCurvePointNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> curvePointService.deleteCurvePoint(curvePoint));
+        assertThrows(IllegalArgumentException.class, () -> curvePointService.deleteCurvePoint(curvePoint.getId()));
         verify(curvePointRepository, never()).delete(any(curvePoint.getClass()));
     }
 

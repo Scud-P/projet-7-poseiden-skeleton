@@ -75,7 +75,7 @@ public class RatingServiceTest {
         ratingService.addRating(rating);
 
         when(ratingRepository.findById(rating.getId())).thenReturn(Optional.of(rating));
-        ratingService.deleteRating(rating);
+        ratingService.deleteRating(rating.getId());
 
         verify(ratingRepository, times(1)).delete(rating);
     }
@@ -83,7 +83,7 @@ public class RatingServiceTest {
     @Test
     public void testDeleteRatingRatingNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> ratingService.deleteRating(rating));
+        assertThrows(IllegalArgumentException.class, () -> ratingService.deleteRating(rating.getId()));
 
         verify(ratingRepository, times(0)).delete(rating);
     }
