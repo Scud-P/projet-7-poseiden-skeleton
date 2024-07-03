@@ -4,33 +4,66 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="utf-8"/>
-    <title>Home</title>
+    <title>Poseidon</title>
     <link rel="stylesheet" href="../../css/bootstrap.min.css">
 </head>
 <body>
-<div class="container py-4">
-    <div class="row align-items-center">
-        <div class="col-md-6">
-            <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="/bidList/list">Bid List</a></li>
-                <li class="nav-item"><a class="nav-link" href="/curvePoint/list">Curve Points</a></li>
-                <li class="nav-item"><a class="nav-link" href="/rating/list">Ratings</a></li>
-                <li class="nav-item"><a class="nav-link" href="/trade/list">Trade</a></li>
-                <li class="nav-item"><a class="nav-link" href="/ruleName/list">Rule</a></li>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <img src="/assets/logo.png" alt="" width="60" height="48" class="d-inline-block align-text-top">
+        <span class="logo-text font-weight-bold"
+              style="font-size: 20px; color: #071226">Poseidon Capital Solutions</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/bidList/list">Bid List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/curvePoint/list">Curve Points</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/rating/list">Ratings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/trade/list">Trade</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link font-weight-bold" href="/ruleName/list">Rule</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                    <a class="nav-link" href="/DBUser/list">User Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger font-weight-bold" href="/logout">Logout</a>
+                </li>
             </ul>
         </div>
-        <div class="col-md-6 text-right" sec:authorize="isAuthenticated()">
-            <div class="d-flex justify-content-end align-items-center">
-                <p class="logged-in-user mb-0 mr-2">Logged in user: <b th:inline="text" class="user">[[${#authentication.name}]]</b></p>
-                <form th:action="@{/logout}" method="POST" class="form-inline">
-                    <input type="submit" value="Logout" class="btn btn-outline-danger"/>
-                </form>
-            </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h5>Welcome to the rules section where you can create, edit or delete rules.</h5>
+    <div class="row">
+        <div class="col-md-6" sec:authorize="isAuthenticated()">
+            <p class="logged-in-user">You are currently logged in as: <b th:inline="text" class="user">[[${#authentication.name}]].</b>
+                Not your account? Please log out!</p>
+            <form th:action="@{/logout}" method="POST" class="d-inline">
+                <input type="submit" value="Logout" class="btn btn-outline-danger"/>
+            </form>
         </div>
     </div>
+</div>
+<div class="container mt-3">
     <div class="row"><h2>Rule List</h2></div>
     <div class="row">
-        <a href="/ruleName/add" class="btn btn-primary btn-sm">Add New</a>
+        <a href="/ruleName/add" class="btn btn-primary btn-sm mb-3">Add New</a>
         <table class="table table-bordered">
             <thead>
             <tr>

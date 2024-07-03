@@ -33,18 +33,16 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/DBUser/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .logout(LogoutConfigurer::permitAll
                 )
                 .exceptionHandling(handling -> handling
-                        .accessDeniedPage("/403") // Redirect to /403 on access denied
+                        .accessDeniedPage("/403")
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(Customizer.withDefaults()).exceptionHandling(configurer -> configurer.accessDeniedPage("/403"));
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
 
@@ -61,7 +59,7 @@ public class SpringSecurityConfig {
     /**
      * Creates an AuthenticationManager bean.
      *
-     * @param http                  The HttpSecurity object.
+     * @param http The HttpSecurity object.
      * @param bCryptPasswordEncoder The BCryptPasswordEncoder instance.
      * @return The created AuthenticationManager.
      * @throws Exception If an error occurs during creation.
