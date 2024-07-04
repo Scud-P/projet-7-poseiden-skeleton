@@ -17,6 +17,7 @@ public class CurveController {
     @Autowired
     private CurvePointService curvePointService;
 
+
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
         List<CurvePoint> curvePoints = curvePointService.getAllCurvePoints();
@@ -38,8 +39,6 @@ public class CurveController {
             model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
             return "redirect:/curvePoint/list";
         }
-
-        // TODO: check data valid and save to db, after saving return Curve list
         return "curvePoint/add";
     }
 

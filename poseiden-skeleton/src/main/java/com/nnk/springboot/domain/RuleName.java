@@ -25,11 +25,11 @@ public class RuleName {
     @Column(name = "name")
     private String name;
 
-    @NotBlank(message = "name is mandatory")
+    @NotBlank(message = "description is mandatory")
     @Column(name = "description")
     private String description;
 
-    @NotBlank(message = "name is mandatory")
+    @NotBlank(message = "Json is mandatory")
     @Column(name = "json")
     private String json;
 

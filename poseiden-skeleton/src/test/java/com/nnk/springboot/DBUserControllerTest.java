@@ -66,7 +66,7 @@ public class DBUserControllerTest {
         Integer id2 = 2;
         String userName2 = "userName2";
         String password2 = "P4ssW0rd!2";
-        String fullName2 = "fullName2";
+        String fullName2 = "fullNameTwo";
         String role2 = "role2";
 
         firstDBUser = new DBUser(id, userName, password, fullName, role);

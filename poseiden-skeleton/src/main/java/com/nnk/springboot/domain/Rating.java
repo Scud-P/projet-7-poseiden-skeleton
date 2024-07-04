@@ -35,9 +35,8 @@ public class Rating {
     @NotBlank(message = "fitchRating is mandatory")
     private String fitchRating;
 
-    @Digits(integer = 10, message = "Only Integers are allowed here", fraction = 0)
+//    @Digits(integer = 10, fraction = 0, message = "Please enter a valid integer number")
     @NotNull(message = "orderNumber is mandatory")
     @Column(name = "orderNumber")
-    private int orderNumber;
-
+    private Integer orderNumber;
 }

@@ -4,7 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +37,8 @@ public class Trade {
     @Column(name = "type")
     private String type;
 
+    @NotNull
+//    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "buyQuantity")
     private double buyQuantity;
 
@@ -88,5 +92,4 @@ public class Trade {
 
     @Column(name = "side")
     private String side;
-
 }
