@@ -38,7 +38,6 @@ public class Trade {
     private String type;
 
     @NotNull
-//    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "buyQuantity")
     private double buyQuantity;
 

@@ -48,5 +48,4 @@ public class RuleName {
     @Column(name = "sqlPart", length = 125)
     @Size(max = 125, message = "Can't be more than 125 characters.")
     private String sqlPart;
-
 }
