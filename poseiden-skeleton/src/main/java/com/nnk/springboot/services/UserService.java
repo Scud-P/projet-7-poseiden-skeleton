@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -21,6 +22,9 @@ public class UserService {
 
     @Transactional
     public DBUser addUser(@Nonnull DBUser DBUserToAdd) {
+        if (isUserNameAlreadyUsed(DBUserToAdd.getUsername())) {
+            throw new IllegalArgumentException("userName already used");
+        }
         DBUserToAdd.setPassword(passwordEncoder.encode(DBUserToAdd.getPassword()));
         userRepository.save(DBUserToAdd);
         return DBUserToAdd;
@@ -37,15 +41,20 @@ public class UserService {
     }
 
     @Transactional
-    public DBUser updateUser(int id, DBUser DBUser) {
+    public DBUser updateUser(int id, DBUser dbUser) {
 
         DBUser existingDBUser = getUserById(id);
 
-        existingDBUser.setRole(DBUser.getRole());
-        existingDBUser.setFullName(DBUser.getFullName());
-        existingDBUser.setUsername(DBUser.getUsername());
+
+        if (!existingDBUser.getUsername().equals(dbUser.getUsername()) && isUserNameAlreadyUsed(dbUser.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        existingDBUser.setRole(dbUser.getRole());
+        existingDBUser.setFullName(dbUser.getFullName());
+        existingDBUser.setUsername(dbUser.getUsername());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        existingDBUser.setPassword(encoder.encode(DBUser.getPassword()));
+        existingDBUser.setPassword(encoder.encode(dbUser.getPassword()));
 
         userRepository.save(existingDBUser);
 
@@ -64,5 +73,10 @@ public class UserService {
 
     public DBUser getByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public boolean isUserNameAlreadyUsed(String userNameToCheck) {
+        Optional<DBUser> optionalUser = Optional.ofNullable(userRepository.findByUsername(userNameToCheck));
+        return optionalUser.isPresent();
     }
 }

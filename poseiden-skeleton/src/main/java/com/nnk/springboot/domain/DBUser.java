@@ -30,10 +30,6 @@ public class DBUser {
 
     @Column(name = "password")
     @NotBlank(message = "Password is mandatory")
-    @Pattern(
-            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,20}$",
-            message = "Password must be 8-20 characters long, contain at least one digit, one lowercase letter, one uppercase letter, one special character (@#$%^&+=!), and have no spaces."
-    )
     private String password;
 
     @Column(name = "fullName")

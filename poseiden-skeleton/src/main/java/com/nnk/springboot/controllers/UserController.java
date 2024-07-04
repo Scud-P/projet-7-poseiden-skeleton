@@ -41,11 +41,27 @@ public class UserController {
     }
 
     @PostMapping("/DBUser/validate")
-    public String validate(@Valid DBUser DBUser, BindingResult result, Model model) {
+    public String validate(@Valid DBUser dbUser, BindingResult result, Model model) {
+
+        // Check if password meets the criteria (8-20 characters, at least one lowercase and one uppercase letter,
+        // at least one number and at least one special character)
+        String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,20}$";
+
+        if (!dbUser.getPassword().matches(passwordPattern)) {
+            result.rejectValue("password", "error.dbUser",
+                    "Password must be 8-20 characters long, contain at least one digit," +
+                            " one lowercase letter, one uppercase letter, one special character (@#$%^&+=!)" +
+                            ", and have no spaces.");
+        }
         if (!result.hasErrors()) {
-            userService.addUser(DBUser);
-            model.addAttribute("users", userService.getAllUsers());
-            return "redirect:/DBUser/list";
+            try {
+                userService.addUser(dbUser);
+                model.addAttribute("users", userService.getAllUsers());
+                return "redirect:/DBUser/list";
+            } catch (IllegalArgumentException e) {
+                result.rejectValue("username", "error.dbUser", "Username already exists");
+                return "DBUser/add";
+            }
         }
         return "DBUser/add";
     }
@@ -58,14 +74,29 @@ public class UserController {
     }
 
     @PostMapping("/DBUser/update/{id}")
-    public String updateUser(@PathVariable("id") Integer id, @Valid DBUser DBUser,
+    public String updateUser(@PathVariable("id") Integer id, @Valid DBUser dbUser,
                              BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "DBUser/update";
+
+        String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,20}$";
+
+        if (!dbUser.getPassword().matches(passwordPattern)) {
+            result.rejectValue("password", "error.dbUser",
+                    "Password must be 8-20 characters long, contain at least one digit," +
+                            " one lowercase letter, one uppercase letter, one special character (@#$%^&+=!)" +
+                            ", and have no spaces.");
         }
-        userService.updateUser(id, DBUser);
-        model.addAttribute("users", userService.getAllUsers());
-        return "redirect:/DBUser/list";
+
+        if (!result.hasErrors()) {
+            try {
+                userService.updateUser(id, dbUser);
+                model.addAttribute("users", userService.getAllUsers());
+                return "redirect:/DBUser/list";
+            } catch (IllegalArgumentException e) {
+                result.rejectValue("username", "error.dbUser", "Username already exists");
+                return "DBUser/update";
+            }
+        }
+        return "DBUser/update";
     }
 
     @GetMapping("/DBUser/delete/{id}")
