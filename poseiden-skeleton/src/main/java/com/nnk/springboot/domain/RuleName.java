@@ -5,6 +5,7 @@ import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,24 +23,30 @@ public class RuleName {
     private int id;
 
     @NotBlank(message = "name is mandatory")
-    @Column(name = "name")
+    @Size(max = 125, message = "Can't be more than 125 characters.")
+    @Column(name = "name", length = 125)
     private String name;
 
     @NotBlank(message = "description is mandatory")
-    @Column(name = "description")
+    @Size(max = 125, message = "Can't be more than 125 characters.")
+    @Column(name = "description", length = 125)
     private String description;
 
     @NotBlank(message = "Json is mandatory")
-    @Column(name = "json")
+    @Size(max = 125, message = "Can't be more than 125 characters.")
+    @Column(name = "json", length = 125)
     private String json;
 
-    @Column(name = "template")
+    @Column(name = "template", length = 512)
+    @Size(max = 512, message = "Can't be more than 512 characters.")
     private String template;
 
-    @Column(name = "sqlStr")
+    @Column(name = "sqlStr", length = 125)
+    @Size(max = 125, message = "Can't be more than 125 characters.")
     private String sqlStr;
 
-    @Column(name = "sqlPart")
+    @Column(name = "sqlPart", length = 125)
+    @Size(max = 125, message = "Can't be more than 125 characters.")
     private String sqlPart;
 
 }
