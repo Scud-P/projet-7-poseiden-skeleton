@@ -145,4 +145,11 @@ public class DBUserServiceTest {
         assertEquals(DBUsers, foundDBUsers);
     }
 
+    @Test
+    public void testGetByUserName() {
+        when(userRepository.findByUsername(firstDBUser.getUsername())).thenReturn(firstDBUser);
+        DBUser foundUser = userService.getByUsername(firstDBUser.getUsername());
+        assertEquals(firstDBUser, foundUser);
+    }
+
 }

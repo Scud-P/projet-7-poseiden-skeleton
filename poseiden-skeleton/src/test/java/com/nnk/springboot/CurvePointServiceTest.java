@@ -133,6 +133,7 @@ public class CurvePointServiceTest {
 
         verify(curvePointRepository, times(2)).save(curvePoint);
     }
+
     @Test
     public void testUpdateCurvePointNotFound() {
 

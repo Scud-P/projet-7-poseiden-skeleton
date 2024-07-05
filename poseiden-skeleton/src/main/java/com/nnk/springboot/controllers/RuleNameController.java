@@ -18,8 +18,7 @@ public class RuleNameController {
     private RuleNameService ruleNameService;
 
     @RequestMapping("/ruleName/list")
-    public String home(Model model)
-    {
+    public String home(Model model) {
         List<RuleName> ruleNames = ruleNameService.getAllRuleNames();
         model.addAttribute("ruleNames", ruleNames);
         return "ruleName/list";
@@ -33,7 +32,7 @@ public class RuleNameController {
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleNameToAdd, BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             ruleNameService.addRuleName(ruleNameToAdd);
             model.addAttribute("ruleNames", ruleNameService.getAllRuleNames());
             return "redirect:/ruleName/list";
@@ -50,9 +49,9 @@ public class RuleNameController {
 
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleNameToUpdate,
-                             BindingResult result, Model model) {
+                                 BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             ruleNameService.updateRuleName(id, ruleNameToUpdate);
             model.addAttribute("ruleNames", ruleNameService.getAllRuleNames());
             return "redirect:/ruleName/list";

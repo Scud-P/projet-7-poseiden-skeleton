@@ -15,14 +15,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BidListController.class)
@@ -54,16 +53,15 @@ public class BidListControllerTest {
         Timestamp secondDate = new Timestamp(1000L);
 
 
-
         firstList = new BidList
-                (1, "account", "type", 1, 1, 1, 1, "benchmark", firstDate, "commentary",
+                (1, "account", "type", 1.0, 1, 1, 1, "benchmark", firstDate, "commentary",
                         "security", "status", "trader", "book", "creationName", firstDate, "revisionName",
-                        secondDate, "dealName", "dealType", "sourceListId", "side" );
+                        secondDate, "dealName", "dealType", "sourceListId", "side");
 
         secondList = new BidList
-                (2, "account2", "type2", 2, 2, 2, 2, "benchmark2", firstDate, "commentary2",
+                (2, "account2", "type2", 2.0, 2, 2, 2, "benchmark2", firstDate, "commentary2",
                         "security2", "status2", "trader2", "book2", "creationName2", firstDate, "revisionName2",
-                        secondDate, "dealName2", "dealType2", "sourceListId2", "side2" );
+                        secondDate, "dealName2", "dealType2", "sourceListId2", "side2");
 
         bidLists = List.of(firstList, secondList);
     }

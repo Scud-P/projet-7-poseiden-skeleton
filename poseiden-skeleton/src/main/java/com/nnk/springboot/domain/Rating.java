@@ -4,9 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,20 +21,24 @@ public class Rating {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "moodysRating")
+    @Column(name = "moodysRating", length = 125)
     @NotBlank(message = "moodysRating is mandatory")
+    @Size(max = 125, message = "Only 125 characters allowed")
     private String moodysRating;
 
-    @Column(name = "sandPRating")
+    @Column(name = "sandPRating", length = 125)
     @NotBlank(message = "sandPRating is mandatory")
+    @Size(max = 125, message = "Only 125 characters allowed")
     private String sandPRating;
 
-    @Column(name = "fitchRating")
+    @Column(name = "fitchRating", length = 125)
     @NotBlank(message = "fitchRating is mandatory")
+    @Size(max = 125, message = "Only 125 characters allowed")
     private String fitchRating;
 
-//    @Digits(integer = 10, fraction = 0, message = "Please enter a valid integer number")
     @NotNull(message = "orderNumber is mandatory")
     @Column(name = "orderNumber")
+    @Min(value = 0, message = "Only positive values from 0 to 255")
+    @Max(value = 255, message = "Only positive values from 0 to 255")
     private Integer orderNumber;
 }

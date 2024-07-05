@@ -19,8 +19,7 @@ public class TradeController {
     private TradeService tradeService;
 
     @RequestMapping("/trade/list")
-    public String home(Model model)
-    {
+    public String home(Model model) {
         List<Trade> tradeList = tradeService.getAllTrades();
         model.addAttribute("trades", tradeList);
         return "trade/list";
@@ -34,7 +33,7 @@ public class TradeController {
     @PostMapping("/trade/validate")
     public String validate(@Valid Trade tradeToAdd, BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             tradeService.addTrade(tradeToAdd);
             model.addAttribute("trades", tradeService.getAllTrades());
             return "redirect:/trade/list";
@@ -51,9 +50,9 @@ public class TradeController {
 
     @PostMapping("/trade/update/{id}")
     public String updateTrade(@PathVariable("id") Integer id, @Valid Trade trade,
-                             BindingResult result, Model model) {
+                              BindingResult result, Model model) {
 
-        if(!result.hasErrors()) {
+        if (!result.hasErrors()) {
             tradeService.updateTrade(id, trade);
             model.addAttribute("trades", tradeService.getAllTrades());
             return "redirect:/trade/list";

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -133,7 +132,7 @@ public class BidListServiceTest {
 
         when(bidListRepository.findAll()).thenReturn(allBids);
 
-        List<BidList> foundBids =  bidService.getAllBids();
+        List<BidList> foundBids = bidService.getAllBids();
         assertEquals(2, foundBids.size());
     }
 }

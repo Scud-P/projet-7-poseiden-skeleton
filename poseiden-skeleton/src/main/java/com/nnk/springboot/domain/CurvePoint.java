@@ -1,6 +1,7 @@
 package com.nnk.springboot.domain;
 
-import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -25,16 +26,16 @@ public class CurvePoint {
 
     @NotNull(message = "curveId is mandatory")
     @Column(name = "curveId")
+    @Min(value = 0, message = "Only positive values from 0 to 255")
+    @Max(value = 255, message = "Only positive values from 0 to 255")
     private Integer curveId;
 
     @Column(name = "asOfDate")
     private Timestamp asOfDate;
 
-//    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "term")
     private Double term;
 
-//    @Digits(integer = 10, fraction = 2, message = "Only numerical values with up to two decimals and a dot separator are allowed for this field (example: 11.23).")
     @Column(name = "value")
     private Double value;
 

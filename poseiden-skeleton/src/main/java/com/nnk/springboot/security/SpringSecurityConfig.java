@@ -59,7 +59,7 @@ public class SpringSecurityConfig {
     /**
      * Creates an AuthenticationManager bean.
      *
-     * @param http The HttpSecurity object.
+     * @param http                  The HttpSecurity object.
      * @param bCryptPasswordEncoder The BCryptPasswordEncoder instance.
      * @return The created AuthenticationManager.
      * @throws Exception If an error occurs during creation.

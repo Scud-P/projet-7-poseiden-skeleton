@@ -23,7 +23,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -186,12 +187,12 @@ public class DBUserControllerTest {
     @Test
     public void testUpdateUserInvalidInput() throws Exception {
 
-        mockMvc.perform(post("/DBUser/update/1"))
+        mockMvc.perform(post("/DBUser/update/1")
+                        .param("password", "invalid"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("DBUser/update"));
 
         verify(userService, times(0)).updateUser(anyInt(), any(DBUser.class));
-
     }
 
     @Test
@@ -202,5 +203,14 @@ public class DBUserControllerTest {
         mockMvc.perform(get("/DBUser/update/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("DBUser/update"));
+    }
+
+    @Test
+    public void testHomeNotAdmin() throws Exception {
+
+        mockMvc.perform(get("/DBUser/list"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/403"));
+
     }
 }

@@ -29,7 +29,7 @@ public class TradeService {
     }
 
     public Trade getTradeById(int id) {
-        return tradeRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No trade found for ID " + id));
+        return tradeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No trade found for ID " + id));
     }
 
     @Transactional

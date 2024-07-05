@@ -25,7 +25,7 @@ public class RuleNameService {
     }
 
     public RuleName getRuleNameById(int id) {
-        return ruleNameRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("No ruleName found for ID " + id));
+        return ruleNameRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No ruleName found for ID " + id));
     }
 
     @Transactional
