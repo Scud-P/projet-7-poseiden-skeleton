@@ -2,6 +2,9 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.BidListController;
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.DTO.BidListDTO;
+import com.nnk.springboot.domain.parameter.BidListParameter;
+import com.nnk.springboot.domain.util.BidListMapper;
 import com.nnk.springboot.services.BidService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +48,12 @@ public class BidListControllerTest {
     private static BidList firstList;
     private static BidList secondList;
 
+    private static BidList firstSimpleList;
+    private static BidList secondSimpleList;
+
     private static List<BidList> bidLists;
+    private static List<BidList> simpleBidLists;
+
 
     @BeforeEach
     public void setUp() {
@@ -64,15 +73,35 @@ public class BidListControllerTest {
                         secondDate, "dealName2", "dealType2", "sourceListId2", "side2");
 
         bidLists = List.of(firstList, secondList);
+
+        firstSimpleList = new BidList();
+        firstSimpleList.setId(0);
+        firstSimpleList.setAccount("account");
+        firstSimpleList.setType("type");
+        firstSimpleList.setBidQuantity(1.0);
+
+        secondSimpleList = new BidList();
+        secondSimpleList.setId(3);
+        secondSimpleList.setAccount("account2");
+        secondSimpleList.setType("type2");
+        secondSimpleList.setBidQuantity(2.0);
+
+        simpleBidLists = List.of(firstSimpleList, secondSimpleList);
     }
 
     @Test
     public void testHome() {
-        when(bidService.getAllBids()).thenReturn(bidLists);
+
+        List<BidListDTO> bidListDTOS = List.of(
+                new BidListDTO(0, "account", "type", 1.0),
+                new BidListDTO(3, "account2", "type2", 2.0)
+                );
+
+        when(bidService.getAllBids()).thenReturn(bidListDTOS);
 
         String home = bidController.home(model);
 
-        verify(model).addAttribute("bidLists", bidLists);
+        verify(model).addAttribute("bidListDTOs", bidListDTOS);
         assertEquals("bidList/list", home);
     }
 
@@ -139,14 +168,18 @@ public class BidListControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("bidList/update"));
 
-        verify(bidService, never()).updateBidList(anyInt(), any(BidList.class));
+        verify(bidService, never()).updateBidList(anyInt(), any(BidListParameter.class));
     }
 
     @Test
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
 
-        when(bidService.getBidById(anyInt())).thenReturn(firstList);
+        when(bidService.getBidListDTOById(anyInt())).thenReturn(new BidListDTO
+                (firstList.getId(), firstList.getAccount(), firstList.getType(), firstList.getBidQuantity()));
+
+        when(bidService.mapBidListDTOToParameter(any(BidListDTO.class))).thenReturn(new BidListParameter
+                (firstList.getId(), firstList.getAccount(), firstList.getType(), firstList.getBidQuantity()));
 
         mockMvc.perform(get("/bidList/update/1"))
                 .andExpect(status().isOk())

@@ -1,6 +1,8 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.DTO.BidListDTO;
+import com.nnk.springboot.domain.parameter.BidListParameter;
 import com.nnk.springboot.repositories.BidListRepository;
 import com.nnk.springboot.services.BidService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,10 @@ public class BidListServiceTest {
     private BidListRepository bidListRepository;
 
     private static BidList bidList;
+
+    private static BidListParameter bidListParameter;
+
+    private static BidList simplifiedBidList;
 
     @BeforeEach
     public void setUp() {
@@ -57,18 +64,28 @@ public class BidListServiceTest {
 
         bidList = new BidList(id, account, type, bidQuantity, askQuantity, bid, ask, benchmark, bidListDate, commentary,
                 security, status, trader, book, creationName, creationDate, revisionName, revisionDate, dealName, dealType, sourceListId, side);
+
+        simplifiedBidList = new BidList();
+        simplifiedBidList.setId(0);
+        simplifiedBidList.setBidQuantity(bidQuantity);
+        simplifiedBidList.setAccount(account);
+        simplifiedBidList.setType(type);
+
+        bidListParameter = new BidListParameter(id, account, type, bidQuantity);
     }
 
     @Test
     public void testAddBidList() {
-        BidList addedBidList = bidService.addBid(bidList);
-        verify(bidListRepository, times(1)).save(bidList);
-        assertEquals(bidList, addedBidList);
+        BidList addedBidList = bidService.addBid(bidListParameter);
+        simplifiedBidList.setBidListDate(addedBidList.getBidListDate());
+        verify(bidListRepository, times(1)).save(simplifiedBidList);
+        assertEquals(simplifiedBidList, addedBidList);
     }
 
     @Test
     public void testGetBidById() {
-        bidService.addBid(bidList);
+
+        bidService.addBid(bidListParameter);
 
         when(bidListRepository.findById(bidList.getId())).thenReturn(Optional.ofNullable(bidList));
         BidList foundBid = bidService.getBidById(bidList.getId());
@@ -82,7 +99,7 @@ public class BidListServiceTest {
 
     @Test
     public void testDeleteFoundBid() {
-        bidService.addBid(bidList);
+        bidService.addBid(bidListParameter);
         when(bidListRepository.findById(bidList.getId())).thenReturn(Optional.ofNullable(bidList));
 
         bidService.deleteBid(bidList.getId());
@@ -99,11 +116,12 @@ public class BidListServiceTest {
     @Test
     public void testUpdateFoundBid() {
 
-        bidService.addBid(bidList);
+        bidService.addBid(bidListParameter);
 
         when(bidListRepository.findById(bidList.getId())).thenReturn(Optional.ofNullable(bidList));
 
-        BidList updatedBidList = new BidList();
+        BidListParameter updatedBidList = new BidListParameter();
+        updatedBidList.setId(1);
         updatedBidList.setAccount("updatedAccount");
         updatedBidList.setType("updatedType");
         updatedBidList.setBidQuantity(2.0);
@@ -120,7 +138,7 @@ public class BidListServiceTest {
     @Test
     public void testUpdateBidNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> bidService.updateBidList(1, bidList));
+        assertThrows(IllegalArgumentException.class, () -> bidService.updateBidList(1, bidListParameter));
         verify(bidListRepository, never()).save(any(BidList.class));
     }
 
@@ -132,7 +150,7 @@ public class BidListServiceTest {
 
         when(bidListRepository.findAll()).thenReturn(allBids);
 
-        List<BidList> foundBids = bidService.getAllBids();
+        List<BidListDTO> foundBids = bidService.getAllBids();
         assertEquals(2, foundBids.size());
     }
 }

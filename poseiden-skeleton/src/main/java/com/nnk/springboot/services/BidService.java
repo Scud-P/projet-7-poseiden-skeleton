@@ -1,6 +1,9 @@
 package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.DTO.BidListDTO;
+import com.nnk.springboot.domain.parameter.BidListParameter;
+import com.nnk.springboot.domain.util.BidListMapper;
 import com.nnk.springboot.repositories.BidListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +18,24 @@ public class BidService {
     @Autowired
     private BidListRepository bidListRepository;
 
-    public List<BidList> getAllBids() {
-        return bidListRepository.findAll();
+    @Autowired
+    private BidListMapper bidListMapper;
+
+
+    public List<BidListDTO> getAllBids() {
+        return bidListRepository.findAll()
+                .stream()
+                .map(bidListMapper::toBidListDTO)
+                .toList();
     }
 
     @Transactional
-    public BidList addBid(BidList bid) {
+    public BidList addBid(BidListParameter bidListParameter) {
         Timestamp date = new Timestamp(System.currentTimeMillis());
-        bid.setBidListDate(date);
-        bidListRepository.save(bid);
-        return bid;
+        BidList bidList = bidListMapper.toBidList(bidListParameter);
+        bidList.setBidListDate(date);
+        bidListRepository.save(bidList);
+        return bidList;
     }
 
 
@@ -33,12 +44,24 @@ public class BidService {
                 orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
     }
 
+    public BidListDTO getBidListDTOById(int id) {
+        BidList bidList = bidListRepository.findById(id).
+                orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
+        return bidListMapper.toBidListDTO(bidList);
+    }
+
+    public BidListParameter mapBidListDTOToParameter(BidListDTO bidListDTO) {
+        return bidListMapper.toBidListParameter(bidListDTO);
+    }
+
     @Transactional
-    public BidList updateBidList(int id, BidList bidList) {
+    public BidList updateBidList(int id, BidListParameter bidListParameter) {
         BidList existingBid = getBidById(id);
-        existingBid.setAccount(bidList.getAccount());
-        existingBid.setType(bidList.getType());
-        existingBid.setBidQuantity(bidList.getBidQuantity());
+        existingBid.setAccount(bidListParameter.getAccount());
+        existingBid.setType(bidListParameter.getType());
+        existingBid.setBidQuantity(bidListParameter.getBidQuantity());
+        existingBid.setId(bidListParameter.getId());
+        bidListRepository.save(existingBid);
         return existingBid;
     }
 

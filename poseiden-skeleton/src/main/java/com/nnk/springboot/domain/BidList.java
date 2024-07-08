@@ -1,5 +1,6 @@
 package com.nnk.springboot.domain;
 
+import com.nnk.springboot.domain.parameter.BidListParameter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -82,4 +83,10 @@ public class BidList {
     @Column(name = "side", length = 125)
     @Size(max = 125, message = "Only 125 characters allowed")
     private String side;
+
+//    public BidList(BidListParameter bidListParameter) {
+//        this.account = bidListParameter.getAccount();
+//        this.type = bidListParameter.getType();
+//        this.bidQuantity = bidListParameter.getBidQuantity();
+//    }
 }

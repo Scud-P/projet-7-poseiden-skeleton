@@ -1,6 +1,8 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.DTO.BidListDTO;
+import com.nnk.springboot.domain.parameter.BidListParameter;
+import com.nnk.springboot.domain.util.BidListMapper;
 import com.nnk.springboot.services.BidService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,39 +21,42 @@ public class BidListController {
 
     @RequestMapping("/bidList/list")
     public String home(Model model) {
-        List<BidList> bidLists = bidService.getAllBids();
-        model.addAttribute("bidLists", bidLists);
+        List<BidListDTO> bidLists = bidService.getAllBids();
+        model.addAttribute("bidListDTOs", bidLists);
         return "bidList/list";
     }
 
     @GetMapping("/bidList/add")
-    public String addBidForm(BidList bid) {
+    public String addBidForm(Model model) {
+        model.addAttribute("bidListParameter", new BidListParameter());
         return "bidList/add";
     }
 
     @PostMapping("/bidList/validate")
-    public String validate(@Valid BidList bid, BindingResult result, Model model) {
+    public String validate(@Valid BidListParameter bidListParameter, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            bidService.addBid(bid);
-            model.addAttribute("bidLists", bidService.getAllBids());
+            bidService.addBid(bidListParameter);
+            model.addAttribute("bidListDTOs", bidService.getAllBids());
             return "redirect:/bidList/list";
         }
+        model.addAttribute("bidListParameter", bidListParameter);
         return "bidList/add";
     }
 
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        BidList bidToUpdate = bidService.getBidById(id);
-        model.addAttribute("bidList", bidToUpdate);
+        BidListDTO bidListDTO = bidService.getBidListDTOById(id);
+        BidListParameter bidListParameter = bidService.mapBidListDTOToParameter(bidListDTO);
+        model.addAttribute("bidListParameter", bidListParameter);
         return "bidList/update";
     }
 
     @PostMapping("/bidList/update/{id}")
-    public String updateBid(@PathVariable("id") Integer id, @Valid BidList bidList,
+    public String updateBid(@PathVariable("id") Integer id, @Valid BidListParameter bidListParameter,
                             BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            bidService.updateBidList(id, bidList);
-            model.addAttribute("bidLists", bidService.getAllBids());
+            bidService.updateBidList(id, bidListParameter);
+            model.addAttribute("bidListDTOs", bidService.getAllBids());
             return "redirect:/bidList/list";
         }
         return "bidList/update";
