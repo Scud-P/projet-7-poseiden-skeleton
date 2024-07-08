@@ -1,6 +1,9 @@
 package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.domain.DTO.CurvePointDTO;
+import com.nnk.springboot.domain.parameter.CurvePointParameter;
+import com.nnk.springboot.domain.util.CurvePointMapper;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +18,14 @@ public class CurvePointService {
     @Autowired
     private CurvePointRepository curvePointRepository;
 
+    @Autowired
+    private CurvePointMapper curvePointMapper;
+
 
     @Transactional
-    public CurvePoint addCurvePoint(CurvePoint curvePoint) {
+    public CurvePoint addCurvePoint(CurvePointParameter curvePointParameter) {
         Timestamp creationStamp = new Timestamp(System.currentTimeMillis());
+        CurvePoint curvePoint = curvePointMapper.toCurvePoint(curvePointParameter);
         curvePoint.setCreationDate(creationStamp);
         curvePoint.setAsOfDate(creationStamp);
         curvePointRepository.save(curvePoint);
@@ -26,12 +33,12 @@ public class CurvePointService {
     }
 
     @Transactional
-    public CurvePoint updateCurvePoint(Integer id, CurvePoint updatedCurvePoint) {
+    public CurvePoint updateCurvePoint(int id, CurvePointParameter curvePointParameter) {
 
         CurvePoint existingCurvePoint = getCurvePointById(id);
-        existingCurvePoint.setCurveId(updatedCurvePoint.getCurveId());
-        existingCurvePoint.setTerm(updatedCurvePoint.getTerm());
-        existingCurvePoint.setValue(updatedCurvePoint.getValue());
+        existingCurvePoint.setCurveId(curvePointParameter.getCurveId());
+        existingCurvePoint.setTerm(curvePointParameter.getTerm());
+        existingCurvePoint.setValue(curvePointParameter.getValue());
         existingCurvePoint.setAsOfDate(new Timestamp(System.currentTimeMillis()));
 
         curvePointRepository.save(existingCurvePoint);
@@ -50,7 +57,20 @@ public class CurvePointService {
         curvePointRepository.delete(existingCurvePoint);
     }
 
-    public List<CurvePoint> getAllCurvePoints() {
-        return curvePointRepository.findAll();
+    public List<CurvePointDTO> getAllCurvePoints() {
+        return curvePointRepository.findAll()
+                .stream()
+                .map(curvePointMapper::toCurvePointDTO)
+                .toList();
+    }
+
+    public CurvePointDTO getCurvePointDTOById(Integer id) {
+        CurvePoint curvePoint = curvePointRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No CurvePoint found for id " + id));
+        return curvePointMapper.toCurvePointDTO(curvePoint);
+    }
+
+    public CurvePointParameter mapCurvePointDTOToParameter(CurvePointDTO curvePointDTO) {
+        return curvePointMapper.toCurvePointParameter(curvePointDTO);
     }
 }

@@ -1,6 +1,9 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.domain.DTO.CurvePointDTO;
+import com.nnk.springboot.domain.parameter.BidListParameter;
+import com.nnk.springboot.domain.parameter.CurvePointParameter;
 import com.nnk.springboot.services.CurvePointService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,43 +23,44 @@ public class CurveController {
 
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
-        List<CurvePoint> curvePoints = curvePointService.getAllCurvePoints();
-        System.out.println(curvePoints);
-        model.addAttribute("curvePoints", curvePoints);
+        List<CurvePointDTO> curvePointDTOs = curvePointService.getAllCurvePoints();
+        model.addAttribute("curvePointDTOs", curvePointDTOs);
         return "curvePoint/list";
     }
 
     @GetMapping("/curvePoint/add")
-    public String addCurvePointForm(CurvePoint curvePoint) {
+    public String addCurvePointForm(Model model) {
+        model.addAttribute("curvePointParameter", new CurvePointParameter());
         return "curvePoint/add";
     }
 
     @PostMapping("/curvePoint/validate")
-    public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
+    public String validate(@Valid CurvePointParameter curvePointParameter, BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            curvePointService.addCurvePoint(curvePoint);
-            model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
+            curvePointService.addCurvePoint(curvePointParameter);
+            model.addAttribute("curvePointDTOs", curvePointService.getAllCurvePoints());
             return "redirect:/curvePoint/list";
         }
+        model.addAttribute("curvePointParameter", curvePointParameter);
         return "curvePoint/add";
     }
 
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
-        CurvePoint curvePoint = curvePointService.getCurvePointById(id);
-        model.addAttribute("curvePoint", curvePoint);
-
+        CurvePointDTO curvePointDTO = curvePointService.getCurvePointDTOById(id);
+        CurvePointParameter curvePointParameter = curvePointService.mapCurvePointDTOToParameter(curvePointDTO);
+        model.addAttribute("curvePointParameter", curvePointParameter);
         return "curvePoint/update";
     }
 
     @PostMapping("/curvePoint/update/{id}")
-    public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
+    public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePointParameter curvePointParameter,
                                    BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            curvePointService.updateCurvePoint(id, curvePoint);
+            curvePointService.updateCurvePoint(id, curvePointParameter);
             model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
             return "redirect:/curvePoint/list";
         }

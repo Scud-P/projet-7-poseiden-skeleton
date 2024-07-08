@@ -2,6 +2,8 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.CurveController;
 import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.domain.DTO.CurvePointDTO;
+import com.nnk.springboot.domain.parameter.CurvePointParameter;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.services.CurvePointService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +49,10 @@ public class CurveControllerTest {
 
     private static CurvePoint firstPoint;
     private static CurvePoint secondPoint;
-    private static CurvePoint thirdPoint;
-    private static List<CurvePoint> curvePoints;
+    private static CurvePointDTO firstPointDTO;
+    private static CurvePointDTO secondPointDTO;
+    private static List<CurvePointDTO> curvePointDTOs;
+
 
     @BeforeEach
     public void setUp() {
@@ -58,16 +62,19 @@ public class CurveControllerTest {
         firstPoint = new CurvePoint(1, 10, firstStamp, 1.0, 1.0, firstStamp);
         secondPoint = new CurvePoint(2, 20, secondStamp, 2.0, 2.0, secondStamp);
 
-        curvePoints = List.of(firstPoint, secondPoint);
+        firstPointDTO = new CurvePointDTO(firstPoint.getId(), firstPoint.getCurveId(), firstPoint.getTerm(), firstPoint.getValue());
+        secondPointDTO = new CurvePointDTO(secondPoint.getId(), secondPoint.getCurveId(), secondPoint.getTerm(), secondPoint.getValue());
+
+        curvePointDTOs = List.of(firstPointDTO, secondPointDTO);
     }
 
     @Test
     public void testHome() {
-        when(curveService.getAllCurvePoints()).thenReturn(curvePoints);
+        when(curveService.getAllCurvePoints()).thenReturn(curvePointDTOs);
 
         String home = curveController.home(model);
 
-        verify(model).addAttribute("curvePoints", curvePoints);
+        verify(model).addAttribute("curvePointDTOs", curvePointDTOs);
         assertEquals("curvePoint/list", home);
     }
 
@@ -105,7 +112,8 @@ public class CurveControllerTest {
         BindingResult mockResult = mock(BindingResult.class);
         when(mockResult.hasErrors()).thenReturn(true);
 
-        mockMvc.perform(post("/curvePoint/validate"))
+        mockMvc.perform(post("/curvePoint/validate")
+                        .param("curveId", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("curvePoint/add"));
     }
@@ -114,9 +122,6 @@ public class CurveControllerTest {
     @WithMockUser
     public void testUpdateCurvePointValidInput() throws Exception {
 
-        BindingResult mockResult = mock(BindingResult.class);
-        when(mockResult.hasErrors()).thenReturn(false);
-
         mockMvc.perform(post("/curvePoint/update/1")
                         .param("id", String.valueOf(secondPoint.getId()))
                         .param("curveId", String.valueOf(secondPoint.getCurveId()))
@@ -124,8 +129,7 @@ public class CurveControllerTest {
                         .param("term", String.valueOf(secondPoint.getTerm()))
                         .param("value", String.valueOf(secondPoint.getValue()))
                         .param("creationDate", String.valueOf(secondPoint.getCreationDate()))
-                        .sessionAttr("curvePoint", firstPoint)
-                        .flashAttr("bindingResult", mockResult))
+                        .sessionAttr("curvePoint", firstPoint))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/curvePoint/list"));
     }
@@ -149,14 +153,18 @@ public class CurveControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("curvePoint/update"));
 
-        verify(curveService, never()).updateCurvePoint(1, firstPoint);
+        verify(curveService, never()).updateCurvePoint(anyInt(), any(CurvePointParameter.class));
     }
 
     @Test
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
 
-        when(curveService.getCurvePointById(anyInt())).thenReturn(firstPoint);
+        when(curveService.getCurvePointDTOById(anyInt())).thenReturn
+                (new CurvePointDTO(firstPoint.getId(), firstPoint.getCurveId(), firstPoint.getTerm(), firstPoint.getValue()));
+
+        when(curveService.mapCurvePointDTOToParameter(any(CurvePointDTO.class))).thenReturn
+                (new CurvePointParameter(firstPoint.getId(), firstPoint.getCurveId(), firstPoint.getTerm(), firstPoint.getValue()));
 
         mockMvc.perform(get("/curvePoint/update/1"))
                 .andExpect(status().isOk())

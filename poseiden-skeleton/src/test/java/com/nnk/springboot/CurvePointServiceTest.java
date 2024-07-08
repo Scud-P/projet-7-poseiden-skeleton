@@ -1,6 +1,9 @@
 package com.nnk.springboot;
 
+import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.domain.DTO.CurvePointDTO;
+import com.nnk.springboot.domain.parameter.CurvePointParameter;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.services.CurvePointService;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +31,8 @@ public class CurvePointServiceTest {
 
     private static CurvePoint curvePoint;
     private static CurvePoint secondPoint;
+    private static CurvePoint simplifiedCurvePoint;
+    private static CurvePointParameter curvePointParameter;
 
     @BeforeEach
     public void SetUp() {
@@ -43,6 +48,14 @@ public class CurvePointServiceTest {
 
         curvePoint = new CurvePoint(id, curveId, firstStamp, term, value, secondStamp);
         secondPoint = new CurvePoint(id2, curveId2, firstStamp, term, value, secondStamp);
+
+        simplifiedCurvePoint = new CurvePoint();
+        simplifiedCurvePoint.setId(id);
+        simplifiedCurvePoint.setCurveId(curveId);
+        simplifiedCurvePoint.setValue(value);
+        simplifiedCurvePoint.setTerm(term);
+
+        curvePointParameter = new CurvePointParameter(id, curveId, term, value);
     }
 
 
@@ -53,7 +66,7 @@ public class CurvePointServiceTest {
 
         when(curvePointRepository.findAll()).thenReturn(curvePoints);
 
-        List<CurvePoint> foundCurvePoints = curvePointService.getAllCurvePoints();
+        List<CurvePointDTO> foundCurvePoints = curvePointService.getAllCurvePoints();
 
         assertEquals(curvePoints.size(), foundCurvePoints.size());
         verify(curvePointRepository, times(1)).findAll();
@@ -63,36 +76,29 @@ public class CurvePointServiceTest {
     @Test
     public void testGetCurvePointById() {
 
-        when(curvePointRepository.save(curvePoint)).thenReturn(curvePoint);
-        CurvePoint existingCurvePoint = curvePointService.addCurvePoint(curvePoint);
+        curvePointService.addCurvePoint(curvePointParameter);
 
         when(curvePointRepository.findById(curvePoint.getId())).thenReturn(Optional.ofNullable(curvePoint));
-        CurvePoint foundCurvePoint = curvePointService.getCurvePointById(curvePoint.getId());
 
-        assertEquals(existingCurvePoint.getId(), foundCurvePoint.getId());
-        assertEquals(existingCurvePoint.getCurveId(), foundCurvePoint.getCurveId());
-        assertEquals(existingCurvePoint.getTerm(), foundCurvePoint.getTerm());
-        assertEquals(existingCurvePoint.getValue(), foundCurvePoint.getValue());
-        assertEquals(existingCurvePoint.getAsOfDate(), foundCurvePoint.getAsOfDate());
-        assertEquals(existingCurvePoint.getCreationDate(), foundCurvePoint.getCreationDate());
+        CurvePoint foundPoint = curvePointService.getCurvePointById(curvePoint.getId());
+        assertEquals(curvePoint, foundPoint);
     }
 
     @Test
     public void testAddCurvePoint() {
 
-        when(curvePointRepository.save(curvePoint)).thenReturn(curvePoint);
+        CurvePoint addedCurvePoint = curvePointService.addCurvePoint(curvePointParameter);
+        simplifiedCurvePoint.setCreationDate(addedCurvePoint.getCreationDate());
+        simplifiedCurvePoint.setAsOfDate(addedCurvePoint.getCreationDate());
+        verify(curvePointRepository, times(1)).save(simplifiedCurvePoint);
+        assertEquals(simplifiedCurvePoint, addedCurvePoint);
 
-        CurvePoint addedCurvePoint = curvePointService.addCurvePoint(curvePoint);
-
-        verify(curvePointRepository, times(1)).save(curvePoint);
-        assertEquals(curvePoint, addedCurvePoint);
     }
 
     @Test
     public void testDeleteCurvePointExistingCurvePoint() {
 
-        when(curvePointRepository.save(curvePoint)).thenReturn(curvePoint);
-        curvePointService.addCurvePoint(curvePoint);
+        curvePointService.addCurvePoint(curvePointParameter);
         when(curvePointRepository.findById(curvePoint.getId())).thenReturn(Optional.ofNullable(curvePoint));
 
         curvePointService.deleteCurvePoint(curvePoint.getId());
@@ -110,18 +116,20 @@ public class CurvePointServiceTest {
     @Test
     public void testUpdateCurvePointExistingCurvePoint() {
 
-        testAddCurvePoint();
+        curvePointService.addCurvePoint(curvePointParameter);
 
-        int id = curvePoint.getId();
+        when(curvePointRepository.findById(curvePoint.getId())).thenReturn(Optional.ofNullable(curvePoint));
 
-        when(curvePointRepository.findById(id)).thenReturn(Optional.ofNullable(curvePoint));
+        CurvePointParameter updatedCurvePointParameter = new CurvePointParameter();
+        updatedCurvePointParameter.setId(1);
+        updatedCurvePointParameter.setCurveId(20);
+        updatedCurvePointParameter.setTerm(2.0);
+        updatedCurvePointParameter.setValue(3.0);
 
-        CurvePoint updatedCurvePoint = new CurvePoint();
-        updatedCurvePoint.setCurveId(20);
-        updatedCurvePoint.setTerm(2.0);
-        updatedCurvePoint.setValue(3.0);
+        CurvePoint resultingCurvePoint = curvePointService.updateCurvePoint(curvePoint.getId(), updatedCurvePointParameter);
 
-        CurvePoint resultingCurvePoint = curvePointService.updateCurvePoint(id, updatedCurvePoint);
+        when(curvePointRepository.save(any(CurvePoint.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
@@ -131,13 +139,13 @@ public class CurvePointServiceTest {
         assertEquals(now.getTime(), resultingCurvePoint.getAsOfDate().getTime(), 10);
         assertEquals(curvePoint.getCreationDate(), resultingCurvePoint.getCreationDate());
 
-        verify(curvePointRepository, times(2)).save(curvePoint);
+        verify(curvePointRepository, times(2)).save(any(CurvePoint.class));
     }
 
     @Test
     public void testUpdateCurvePointNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> curvePointService.updateCurvePoint(1, curvePoint));
+        assertThrows(IllegalArgumentException.class, () -> curvePointService.updateCurvePoint(1, curvePointParameter));
         verify(curvePointRepository, never()).save(curvePoint);
 
     }
