@@ -1,7 +1,9 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.RatingController;
+import com.nnk.springboot.domain.DTO.RatingDTO;
 import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.domain.parameter.RatingParameter;
 import com.nnk.springboot.services.RatingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,12 @@ public class RatingControllerTest {
     private static Rating secondRating;
     private static Rating thirdRating;
     private static List<Rating> ratings;
+    private static RatingParameter firstRatingParameter;
+    private static RatingParameter secondRatingParameter;
+    private static List<RatingParameter> ratingParameters;
+    private static RatingDTO firstRatingDTO;
+    private static RatingDTO secondRatingDTO;
+    private static List<RatingDTO> ratingDTOS;
 
 
     @BeforeEach
@@ -54,16 +62,32 @@ public class RatingControllerTest {
         thirdRating = new Rating(3, "G", "H", "I", 3);
 
         ratings = List.of(firstRating, secondRating, thirdRating);
+
+        firstRatingParameter = new RatingParameter(
+                firstRating.getId(), firstRating.getMoodysRating(), firstRating.getSandPRating(), firstRating.getFitchRating(), firstRating.getOrderNumber());
+
+        secondRatingParameter = new RatingParameter(
+                secondRating.getId(), secondRating.getMoodysRating(), secondRating.getSandPRating(), secondRating.getFitchRating(), secondRating.getOrderNumber());
+
+        ratingParameters = List.of(firstRatingParameter, secondRatingParameter);
+
+        firstRatingDTO = new RatingDTO(
+                firstRating.getId(), firstRating.getMoodysRating(), firstRating.getSandPRating(), firstRating.getFitchRating(), firstRating.getOrderNumber());
+
+        secondRatingDTO = new RatingDTO(
+                secondRating.getId(), secondRating.getMoodysRating(), secondRating.getSandPRating(), secondRating.getFitchRating(), secondRating.getOrderNumber());
+
+        ratingDTOS = List.of(firstRatingDTO, secondRatingDTO);
     }
 
     @Test
     public void testHome() {
 
-        when(ratingService.getAllRatings()).thenReturn(ratings);
+        when(ratingService.getAllRatings()).thenReturn(ratingDTOS);
 
         String home = ratingController.home(model);
 
-        verify(model).addAttribute("ratings", ratings);
+        verify(model).addAttribute("ratingDTOs", ratingDTOS);
         assertEquals("rating/list", home);
 
     }
@@ -121,9 +145,9 @@ public class RatingControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
-        when(ratingService.updateRating(1, firstRating)).thenReturn(firstRating);
+        when(ratingService.updateRating(1, firstRatingParameter)).thenReturn(firstRating);
 
-        verify(ratingService, times(1)).updateRating(1, firstRating);
+        verify(ratingService, times(1)).updateRating(1, firstRatingParameter);
 
     }
 
@@ -144,13 +168,15 @@ public class RatingControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
-        verify(ratingService, never()).updateRating(1, firstRating);
+        verify(ratingService, never()).updateRating(1, firstRatingParameter);
     }
 
     @Test
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
-        when(ratingService.getRatingById(anyInt())).thenReturn(firstRating);
+
+        when(ratingService.getRatingDTOById(anyInt())).thenReturn(firstRatingDTO);
+        when(ratingService.mapRatingDTOToParameter(any(RatingDTO.class))).thenReturn(firstRatingParameter);
 
         mockMvc.perform(get("/rating/update/1"))
                 .andExpect(status().isOk())

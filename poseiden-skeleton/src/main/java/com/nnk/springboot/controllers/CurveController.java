@@ -1,8 +1,6 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.DTO.CurvePointDTO;
-import com.nnk.springboot.domain.parameter.BidListParameter;
 import com.nnk.springboot.domain.parameter.CurvePointParameter;
 import com.nnk.springboot.services.CurvePointService;
 import jakarta.validation.Valid;

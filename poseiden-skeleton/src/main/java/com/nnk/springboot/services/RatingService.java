@@ -1,6 +1,9 @@
 package com.nnk.springboot.services;
 
+import com.nnk.springboot.domain.DTO.RatingDTO;
 import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.domain.parameter.RatingParameter;
+import com.nnk.springboot.domain.util.RatingMapper;
 import com.nnk.springboot.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,12 +17,19 @@ public class RatingService {
     @Autowired
     private RatingRepository ratingRepository;
 
-    public List<Rating> getAllRatings() {
-        return ratingRepository.findAll();
+    @Autowired
+    private RatingMapper ratingMapper;
+
+    public List<RatingDTO> getAllRatings() {
+        return ratingRepository.findAll()
+                .stream()
+                .map(ratingMapper::toRatingDTO)
+                .toList();
     }
 
     @Transactional
-    public Rating addRating(Rating rating) {
+    public Rating addRating(RatingParameter ratingParameter) {
+        Rating rating = ratingMapper.toRating(ratingParameter);
         ratingRepository.save(rating);
         return rating;
     }
@@ -30,13 +40,13 @@ public class RatingService {
     }
 
     @Transactional
-    public Rating updateRating(int id, Rating updatedRating) {
+    public Rating updateRating(int id, RatingParameter ratingParameter) {
 
         Rating existingRating = getRatingById(id);
-        existingRating.setMoodysRating(updatedRating.getMoodysRating());
-        existingRating.setSandPRating(updatedRating.getSandPRating());
-        existingRating.setFitchRating(updatedRating.getFitchRating());
-        existingRating.setOrderNumber(updatedRating.getOrderNumber());
+        existingRating.setMoodysRating(ratingParameter.getMoodysRating());
+        existingRating.setSandPRating(ratingParameter.getSandPRating());
+        existingRating.setFitchRating(ratingParameter.getFitchRating());
+        existingRating.setOrderNumber(ratingParameter.getOrderNumber());
 
         ratingRepository.save(existingRating);
 
@@ -47,5 +57,15 @@ public class RatingService {
     public void deleteRating(int id) {
         Rating existingRating = getRatingById(id);
         ratingRepository.delete(existingRating);
+    }
+
+    public RatingDTO getRatingDTOById(Integer id) {
+        Rating rating = ratingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Rating found for id " + id));
+        return ratingMapper.toRatingDTO(rating);
+    }
+
+    public RatingParameter mapRatingDTOToParameter(RatingDTO ratingDTO) {
+        return ratingMapper.toRatingParameter(ratingDTO);
     }
 }

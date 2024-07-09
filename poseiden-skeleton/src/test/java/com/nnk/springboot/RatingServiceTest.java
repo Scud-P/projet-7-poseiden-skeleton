@@ -1,6 +1,7 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.domain.parameter.RatingParameter;
 import com.nnk.springboot.repositories.RatingRepository;
 import com.nnk.springboot.services.RatingService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ public class RatingServiceTest {
 
     private static Rating rating;
 
+    private static RatingParameter ratingParameter;
+
     @BeforeEach
     public void setUp() {
         int ratingId = 1;
@@ -40,40 +43,36 @@ public class RatingServiceTest {
         rating.setSandPRating(sandPrRating);
         rating.setFitchRating(fitchRating);
         rating.setMoodysRating(moodysRating);
+
+        ratingParameter = new RatingParameter(ratingId, moodysRating, sandPrRating, fitchRating, orderNumber);
+
     }
 
     @Test
     public void testGetRatingById() {
-
-        when(ratingRepository.save(rating)).thenReturn(rating);
-        Rating existingRating = ratingService.addRating(rating);
+        ratingService.addRating(ratingParameter);
 
         when(ratingRepository.findById(rating.getId())).thenReturn(Optional.ofNullable(rating));
-        Rating result = ratingService.getRatingById(rating.getId());
 
-        assertEquals(existingRating.getId(), result.getId());
-        assertEquals(existingRating.getOrderNumber(), result.getOrderNumber());
-        assertEquals(existingRating.getSandPRating(), result.getSandPRating());
-        assertEquals(existingRating.getFitchRating(), result.getFitchRating());
-        assertEquals(existingRating.getMoodysRating(), result.getMoodysRating());
+        Rating foundRating = ratingService.getRatingById(rating.getId());
+
+        assertEquals(rating, foundRating);
     }
 
     @Test
     public void testAddRating() {
 
-        when(ratingRepository.save(rating)).thenReturn(rating);
-
-        Rating addedRating = ratingService.addRating(rating);
-
-        verify(ratingRepository, times(1)).save(rating);
+        Rating addedRating = ratingService.addRating(ratingParameter);
+        verify(ratingRepository, times(1)).save(addedRating);
         assertEquals(rating, addedRating);
+
     }
 
     @Test
     public void testDeleteRatingExistingRating() {
 
         when(ratingRepository.save(rating)).thenReturn(rating);
-        ratingService.addRating(rating);
+        ratingService.addRating(ratingParameter);
 
         when(ratingRepository.findById(rating.getId())).thenReturn(Optional.of(rating));
         ratingService.deleteRating(rating.getId());
@@ -92,37 +91,31 @@ public class RatingServiceTest {
     @Test
     public void testUpdateRatingExistingRating() {
 
-        Rating updatedRating = new Rating();
+        ratingService.addRating(ratingParameter);
 
-        int updatedRatingId = 1;
-        int updatedOrderNumber = 2;
-        String updatedSandPrRating = "Bad";
-        String updatedFitchRating = "Terrible";
-        String updatedMoodysRating = "Toxic";
+        when(ratingRepository.findById(rating.getId())).thenReturn(Optional.ofNullable(rating));
 
-        updatedRating.setId(updatedRatingId);
-        updatedRating.setOrderNumber(updatedOrderNumber);
-        updatedRating.setSandPRating(updatedSandPrRating);
-        updatedRating.setFitchRating(updatedFitchRating);
-        updatedRating.setMoodysRating(updatedMoodysRating);
+        RatingParameter updatedRatingParameter = new RatingParameter(
+                1, "moodys", "sandPR", "fitch", 2
+        );
 
-        when(ratingRepository.save(rating)).thenReturn(rating);
-        ratingService.addRating(rating);
+        Rating resultingRating = ratingService.updateRating(rating.getId(), updatedRatingParameter);
 
-        when(ratingRepository.findById(updatedRating.getId())).thenReturn(Optional.of(rating));
-        Rating result = ratingService.updateRating(1, updatedRating);
+        when(ratingRepository.save(any(Rating.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertEquals(updatedOrderNumber, result.getOrderNumber());
-        assertEquals(updatedSandPrRating, result.getSandPRating());
-        assertEquals(updatedFitchRating, result.getFitchRating());
-        assertEquals(updatedMoodysRating, result.getMoodysRating());
+        assertEquals(updatedRatingParameter.getId(), resultingRating.getId());
+        assertEquals(updatedRatingParameter.getMoodysRating(), resultingRating.getMoodysRating());
+        assertEquals(updatedRatingParameter.getFitchRating(), resultingRating.getFitchRating());
+        assertEquals(updatedRatingParameter.getSandPRating(), resultingRating.getSandPRating());
+        assertEquals(updatedRatingParameter.getOrderNumber(), resultingRating.getOrderNumber());
 
+        verify(ratingRepository, times(2)).save(any(Rating.class));
     }
 
     @Test
     public void testUpdateRatingRatingNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> ratingService.updateRating(1, rating));
+        assertThrows(IllegalArgumentException.class, () -> ratingService.updateRating(1, ratingParameter));
         verify(ratingRepository, times(0)).save(rating);
     }
 
