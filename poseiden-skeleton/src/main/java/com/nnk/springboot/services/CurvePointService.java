@@ -3,7 +3,7 @@ package com.nnk.springboot.services;
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.DTO.CurvePointDTO;
 import com.nnk.springboot.domain.parameter.CurvePointParameter;
-import com.nnk.springboot.domain.util.CurvePointMapper;
+import com.nnk.springboot.util.CurvePointMapper;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

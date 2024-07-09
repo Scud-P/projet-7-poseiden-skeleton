@@ -4,7 +4,6 @@ import com.nnk.springboot.controllers.BidListController;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.DTO.BidListDTO;
 import com.nnk.springboot.domain.parameter.BidListParameter;
-import com.nnk.springboot.domain.util.BidListMapper;
 import com.nnk.springboot.services.BidService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

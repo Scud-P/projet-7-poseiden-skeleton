@@ -3,7 +3,7 @@ package com.nnk.springboot.services;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.DTO.BidListDTO;
 import com.nnk.springboot.domain.parameter.BidListParameter;
-import com.nnk.springboot.domain.util.BidListMapper;
+import com.nnk.springboot.util.BidListMapper;
 import com.nnk.springboot.repositories.BidListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,13 +40,13 @@ public class BidService {
 
 
     public BidList getBidById(int id) {
-        return bidListRepository.findById(id).
-                orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
+        return bidListRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
     }
 
     public BidListDTO getBidListDTOById(int id) {
-        BidList bidList = bidListRepository.findById(id).
-                orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
+        BidList bidList = bidListRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
         return bidListMapper.toBidListDTO(bidList);
     }
 

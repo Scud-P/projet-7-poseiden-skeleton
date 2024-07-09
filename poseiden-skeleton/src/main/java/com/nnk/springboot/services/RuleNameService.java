@@ -1,7 +1,10 @@
 package com.nnk.springboot.services;
 
 
+import com.nnk.springboot.domain.DTO.RuleNameDTO;
 import com.nnk.springboot.domain.RuleName;
+import com.nnk.springboot.domain.parameter.RuleNameParameter;
+import com.nnk.springboot.util.RuleNameMapper;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +18,21 @@ public class RuleNameService {
     @Autowired
     private RuleNameRepository ruleNameRepository;
 
-    public List<RuleName> getAllRuleNames() {
-        return ruleNameRepository.findAll();
+    @Autowired
+    private RuleNameMapper ruleNameMapper;
+
+    public List<RuleNameDTO> getAllRuleNames() {
+        return ruleNameRepository.findAll()
+                .stream()
+                .map(ruleNameMapper::toRuleNameDTO)
+                .toList();
     }
 
     @Transactional
-    public RuleName addRuleName(RuleName ruleNameToAdd) {
-        return ruleNameRepository.save(ruleNameToAdd);
+    public RuleName addRuleName(RuleNameParameter ruleNameParameter) {
+        RuleName ruleName = ruleNameMapper.toRuleName(ruleNameParameter);
+        ruleNameRepository.save(ruleName);
+        return ruleName;
     }
 
     public RuleName getRuleNameById(int id) {
@@ -29,14 +40,14 @@ public class RuleNameService {
     }
 
     @Transactional
-    public RuleName updateRuleName(int id, RuleName ruleNameToUpdate) {
+    public RuleName updateRuleName(int id, RuleNameParameter ruleNameParameter) {
         RuleName existingRuleName = getRuleNameById(id);
-        existingRuleName.setName(ruleNameToUpdate.getName());
-        existingRuleName.setDescription(ruleNameToUpdate.getDescription());
-        existingRuleName.setJson(ruleNameToUpdate.getJson());
-        existingRuleName.setTemplate(ruleNameToUpdate.getTemplate());
-        existingRuleName.setSqlStr(ruleNameToUpdate.getSqlStr());
-        existingRuleName.setSqlPart(ruleNameToUpdate.getSqlPart());
+        existingRuleName.setName(ruleNameParameter.getName());
+        existingRuleName.setDescription(ruleNameParameter.getDescription());
+        existingRuleName.setJson(ruleNameParameter.getJson());
+        existingRuleName.setTemplate(ruleNameParameter.getTemplate());
+        existingRuleName.setSqlStr(ruleNameParameter.getSqlStr());
+        existingRuleName.setSqlPart(ruleNameParameter.getSqlPart());
         ruleNameRepository.save(existingRuleName);
         return existingRuleName;
     }
@@ -45,5 +56,14 @@ public class RuleNameService {
     public void deleteRuleName(int id) {
         RuleName existingRuleName = getRuleNameById(id);
         ruleNameRepository.delete(existingRuleName);
+    }
+
+    public RuleNameDTO getRuleNameDTOById(Integer id) {
+        RuleName ruleName = getRuleNameById(id);
+        return ruleNameMapper.toRuleNameDTO(ruleName);
+    }
+
+    public RuleNameParameter mapRuleNameDTOToParameter(RuleNameDTO ruleNameDTO) {
+        return  ruleNameMapper.toRuleNameParameter(ruleNameDTO);
     }
 }

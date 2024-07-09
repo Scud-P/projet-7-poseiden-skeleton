@@ -1,7 +1,9 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.TradeController;
+import com.nnk.springboot.domain.DTO.TradeDTO;
 import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.domain.parameter.TradeParameter;
 import com.nnk.springboot.services.TradeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,9 @@ public class TradeControllerTest {
     private static Trade firstTrade;
     private static Trade secondTrade;
     private static List<Trade> tradeList;
+    private static Trade firstSimpleTrade;
+    private static Trade secondSimpleTrade;
+    private static List<Trade> simpleTrades;
 
     @BeforeEach
     public void setUp() {
@@ -101,15 +106,35 @@ public class TradeControllerTest {
                 dealName2, dealType2, sourceListId2, side2);
 
         tradeList = List.of(firstTrade, secondTrade);
+
+        firstSimpleTrade =  new Trade();
+        firstSimpleTrade.setId(0);
+        firstSimpleTrade.setAccount(account);
+        firstSimpleTrade.setType(type);
+        firstSimpleTrade.setBuyQuantity(buyQuantity);
+
+        secondSimpleTrade =  new Trade();
+        secondSimpleTrade.setId(3);
+        secondSimpleTrade.setAccount(account2);
+        secondSimpleTrade.setType(type2);
+        secondSimpleTrade.setBuyQuantity(buyQuantity2);
+
+        simpleTrades = List.of(firstSimpleTrade, secondSimpleTrade);
+
     }
 
     @Test
     public void testHome() {
 
-        when(tradeService.getAllTrades()).thenReturn(tradeList);
+        List<TradeDTO> tradeDTOs = List.of(
+                new TradeDTO(0, firstTrade.getAccount(), firstTrade.getType(), firstTrade.getBuyQuantity()),
+                new TradeDTO(3, secondTrade.getAccount(), secondTrade.getType(), secondTrade.getBuyQuantity())
+                );
+
+        when(tradeService.getAllTrades()).thenReturn(tradeDTOs);
         String home = tradeController.home(model);
 
-        verify(model).addAttribute("trades", tradeList);
+        verify(model).addAttribute("tradeDTOs", tradeDTOs);
         assertEquals("trade/list", home);
     }
 
@@ -135,7 +160,7 @@ public class TradeControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/trade/list"));
 
-        verify(tradeService, times(1)).addTrade(any(Trade.class));
+        verify(tradeService, times(1)).addTrade(any(TradeParameter.class));
     }
 
     @Test
@@ -149,14 +174,18 @@ public class TradeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("trade/add"));
 
-        verify(tradeService, times(0)).addTrade(any(Trade.class));
+        verify(tradeService, times(0)).addTrade(any(TradeParameter.class));
     }
 
     @Test
     @WithMockUser
     public void testShowTradeUpdateForm() throws Exception {
 
-        when(tradeService.getTradeById(anyInt())).thenReturn(firstTrade);
+        when(tradeService.getTradeDTOById(anyInt())).thenReturn(new TradeDTO(
+                        firstTrade.getId(), firstTrade.getAccount(), firstTrade.getType(), firstTrade.getBuyQuantity()));
+
+        when(tradeService.mapBidListDTOToParameter(any(TradeDTO.class))).thenReturn(new TradeParameter(
+                firstTrade.getId(), firstTrade.getAccount(), firstTrade.getType(), firstTrade.getBuyQuantity()));
 
         mockMvc.perform(get("/trade/update/1"))
                 .andExpect(status().isOk())
@@ -178,7 +207,7 @@ public class TradeControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/trade/list"));
 
-        verify(tradeService, times(1)).updateTrade(anyInt(), any(Trade.class));
+        verify(tradeService, times(1)).updateTrade(anyInt(), any(TradeParameter.class));
     }
 
     @Test
@@ -194,7 +223,7 @@ public class TradeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("trade/update"));
 
-        verify(tradeService, times(0)).updateTrade(anyInt(), any(Trade.class));
+        verify(tradeService, times(0)).updateTrade(anyInt(), any(TradeParameter.class));
     }
 
     @Test

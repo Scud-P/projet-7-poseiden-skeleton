@@ -1,6 +1,8 @@
 package com.nnk.springboot.controllers;
 
+import com.nnk.springboot.domain.DTO.TradeDTO;
 import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.domain.parameter.TradeParameter;
 import com.nnk.springboot.services.TradeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,41 +22,44 @@ public class TradeController {
 
     @RequestMapping("/trade/list")
     public String home(Model model) {
-        List<Trade> tradeList = tradeService.getAllTrades();
-        model.addAttribute("trades", tradeList);
+        List<TradeDTO> tradeDTOs = tradeService.getAllTrades();
+        model.addAttribute("tradeDTOs", tradeDTOs);
         return "trade/list";
     }
 
     @GetMapping("/trade/add")
-    public String addTrade(Trade trade) {
-        return "trade/add";
+    public String addTrade(Model model) {
+    model.addAttribute("tradeParameter", new TradeParameter());
+    return "trade/add";
     }
 
     @PostMapping("/trade/validate")
-    public String validate(@Valid Trade tradeToAdd, BindingResult result, Model model) {
+    public String validate(@Valid TradeParameter tradeParameter, BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            tradeService.addTrade(tradeToAdd);
-            model.addAttribute("trades", tradeService.getAllTrades());
+            tradeService.addTrade(tradeParameter);
+            model.addAttribute("tradeDTOs", tradeService.getAllTrades());
             return "redirect:/trade/list";
         }
+        model.addAttribute("tradeParameter", tradeParameter);
         return "trade/add";
     }
 
     @GetMapping("/trade/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        Trade tradeToUpdate = tradeService.getTradeById(id);
-        model.addAttribute("trade", tradeToUpdate);
+        TradeDTO tradeDTO = tradeService.getTradeDTOById(id);
+        TradeParameter tradeParameter = tradeService.mapBidListDTOToParameter(tradeDTO);
+        model.addAttribute("tradeParameter", tradeParameter);
         return "trade/update";
     }
 
     @PostMapping("/trade/update/{id}")
-    public String updateTrade(@PathVariable("id") Integer id, @Valid Trade trade,
+    public String updateTrade(@PathVariable("id") Integer id, @Valid TradeParameter tradeParameter,
                               BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            tradeService.updateTrade(id, trade);
-            model.addAttribute("trades", tradeService.getAllTrades());
+            tradeService.updateTrade(id, tradeParameter);
+            model.addAttribute("tradeDTOs", tradeService.getAllTrades());
             return "redirect:/trade/list";
         }
         return "trade/update";

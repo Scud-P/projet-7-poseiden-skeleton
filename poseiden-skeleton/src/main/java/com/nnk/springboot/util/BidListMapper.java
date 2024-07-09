@@ -1,4 +1,4 @@
-package com.nnk.springboot.domain.util;
+package com.nnk.springboot.util;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.DTO.BidListDTO;
@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface BidListMapper {
+
+    //TODO Check if I can remove that
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "bidListDate", ignore = true)

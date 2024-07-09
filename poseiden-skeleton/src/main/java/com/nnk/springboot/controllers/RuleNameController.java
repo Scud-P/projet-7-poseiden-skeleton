@@ -1,6 +1,7 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.RuleName;
+import com.nnk.springboot.domain.DTO.RuleNameDTO;
+import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.services.RuleNameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,40 +20,45 @@ public class RuleNameController {
 
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
-        List<RuleName> ruleNames = ruleNameService.getAllRuleNames();
-        model.addAttribute("ruleNames", ruleNames);
+        List<RuleNameDTO> ruleNameDTOs = ruleNameService.getAllRuleNames();
+        model.addAttribute("ruleNameDTOs", ruleNameDTOs);
         return "ruleName/list";
     }
 
     @GetMapping("/ruleName/add")
-    public String addRuleForm(RuleName ruleName) {
+    public String addRuleForm(Model model) {
+        model.addAttribute("ruleNameParameter", new RuleNameParameter());
         return "ruleName/add";
     }
 
     @PostMapping("/ruleName/validate")
-    public String validate(@Valid RuleName ruleNameToAdd, BindingResult result, Model model) {
+    public String validate(@Valid RuleNameParameter ruleNameParameter, BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            ruleNameService.addRuleName(ruleNameToAdd);
-            model.addAttribute("ruleNames", ruleNameService.getAllRuleNames());
+            ruleNameService.addRuleName(ruleNameParameter);
+            model.addAttribute("ruleNameDTOs", ruleNameService.getAllRuleNames());
             return "redirect:/ruleName/list";
         }
+        model.addAttribute("ruleNameParameter", ruleNameParameter);
         return "ruleName/add";
     }
 
+    // TODO Can I just get the Parameter directly?
+
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        RuleName ruleNameToUpdate = ruleNameService.getRuleNameById(id);
-        model.addAttribute("ruleName", ruleNameToUpdate);
+        RuleNameDTO ruleNameDTO = ruleNameService.getRuleNameDTOById(id);
+        RuleNameParameter ruleNameParameter = ruleNameService.mapRuleNameDTOToParameter(ruleNameDTO);
+        model.addAttribute("ruleNameParameter", ruleNameParameter);
         return "ruleName/update";
     }
 
     @PostMapping("/ruleName/update/{id}")
-    public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleNameToUpdate,
+    public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleNameParameter ruleNameParameter,
                                  BindingResult result, Model model) {
 
         if (!result.hasErrors()) {
-            ruleNameService.updateRuleName(id, ruleNameToUpdate);
+            ruleNameService.updateRuleName(id, ruleNameParameter);
             model.addAttribute("ruleNames", ruleNameService.getAllRuleNames());
             return "redirect:/ruleName/list";
         }

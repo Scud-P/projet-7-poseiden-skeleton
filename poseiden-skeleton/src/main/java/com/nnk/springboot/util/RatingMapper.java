@@ -1,4 +1,4 @@
-package com.nnk.springboot.domain.util;
+package com.nnk.springboot.util;
 
 import com.nnk.springboot.domain.DTO.RatingDTO;
 import com.nnk.springboot.domain.Rating;

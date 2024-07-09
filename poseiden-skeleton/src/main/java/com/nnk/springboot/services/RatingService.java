@@ -3,7 +3,7 @@ package com.nnk.springboot.services;
 import com.nnk.springboot.domain.DTO.RatingDTO;
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.parameter.RatingParameter;
-import com.nnk.springboot.domain.util.RatingMapper;
+import com.nnk.springboot.util.RatingMapper;
 import com.nnk.springboot.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

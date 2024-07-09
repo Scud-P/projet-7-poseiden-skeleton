@@ -1,6 +1,8 @@
 package com.nnk.springboot;
 
+import com.nnk.springboot.domain.DTO.TradeDTO;
 import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.domain.parameter.TradeParameter;
 import com.nnk.springboot.repositories.TradeRepository;
 import com.nnk.springboot.services.TradeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +32,8 @@ public class TradeServiceTest {
     private static Trade trade2;
 
     private static List<Trade> tradeList;
+    private static TradeParameter tradeParameter;
+    private static Trade simplifiedTrade;
 
     @BeforeEach
     public void setUp() {
@@ -87,10 +91,25 @@ public class TradeServiceTest {
                 dealName2, dealType2, sourceListId2, side2);
 
         tradeList = List.of(trade, trade2);
+
+        simplifiedTrade = new Trade();
+        simplifiedTrade.setId(1);
+        simplifiedTrade.setAccount(account);
+        simplifiedTrade.setType(type);
+        simplifiedTrade.setBuyQuantity(buyQuantity);
+
+        tradeParameter = new TradeParameter();
+        tradeParameter.setId(1);
+        tradeParameter.setAccount(account);
+        tradeParameter.setType(type);
+        tradeParameter.setBuyQuantity(buyQuantity);
+
     }
 
     @Test
     public void testGetTradeById() {
+
+        tradeService.addTrade(tradeParameter);
 
         when(tradeRepository.findById(trade.getId())).thenReturn(Optional.ofNullable(trade));
         Trade foundTrade = tradeService.getTradeById(trade.getId());
@@ -100,53 +119,61 @@ public class TradeServiceTest {
 
     @Test
     public void testGetAllTrades() {
-
         when(tradeRepository.findAll()).thenReturn(tradeList);
-        List<Trade> foundList = tradeService.getAllTrades();
+        List<TradeDTO> foundList = tradeService.getAllTrades();
 
-        assertEquals(foundList, tradeList);
+        assertEquals(tradeList.size(), foundList.size());
     }
 
     @Test
     public void testAddTrade() {
+        Trade addedTrade = tradeService.addTrade(tradeParameter);
+        simplifiedTrade.setCreationDate(trade.getCreationDate());
 
-        when(tradeRepository.save(trade)).thenReturn(trade);
-        Trade addedTrade = tradeService.addTrade(trade);
-        assertEquals(addedTrade, trade);
         verify(tradeRepository, times(1)).save(any(Trade.class));
 
+        assertEquals(simplifiedTrade.getId(), addedTrade.getId());
+        assertEquals(simplifiedTrade.getAccount(), addedTrade.getAccount());
+        assertEquals(simplifiedTrade.getType(), addedTrade.getType());
+        assertEquals(simplifiedTrade.getCreationDate().getTime(), addedTrade.getCreationDate().getTime(), 10);
     }
 
     @Test
     public void testUpdateTradeFoundTrade() {
 
-        when(tradeRepository.save(trade)).thenReturn(trade);
-        Trade addedTrade = tradeService.addTrade(trade);
+        tradeService.addTrade(tradeParameter);
 
-        when(tradeRepository.findById(trade.getId())).thenReturn(Optional.ofNullable(addedTrade));
+        when(tradeRepository.findById(simplifiedTrade.getId())).thenReturn(Optional.ofNullable(trade));
 
-        Trade updatedTrade = new Trade();
-        updatedTrade.setAccount(trade2.getAccount());
-        updatedTrade.setType(trade2.getType());
-        updatedTrade.setBuyQuantity(trade2.getBuyQuantity());
+        TradeParameter updatedTradeParameter = new TradeParameter();
+        updatedTradeParameter.setId(1);
+        updatedTradeParameter.setAccount(trade2.getAccount());
+        updatedTradeParameter.setType(trade2.getType());
+        updatedTradeParameter.setBuyQuantity(trade2.getBuyQuantity());
 
-        Trade resultingTrade = tradeService.updateTrade(trade.getId(), updatedTrade);
+        Trade resultingTrade = tradeService.updateTrade(1, updatedTradeParameter);
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        assertEquals(trade.getId(), resultingTrade.getId());
+        assertEquals(simplifiedTrade.getId(), resultingTrade.getId());
         assertEquals(trade2.getAccount(), resultingTrade.getAccount());
         assertEquals(trade2.getType(), resultingTrade.getType());
         assertEquals(now.getTime(), resultingTrade.getRevisionDate().getTime(), 10);
         assertEquals(trade.getCreationDate(), resultingTrade.getCreationDate());
 
         verify(tradeRepository, times(2)).save(any(Trade.class));
-
     }
 
     @Test
     public void testUpdateTradeNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> tradeService.updateTrade(trade.getId(), trade2));
+
+        TradeParameter wrongTradeParameter = new TradeParameter();
+        wrongTradeParameter.setId(trade2.getId());
+        wrongTradeParameter.setAccount(trade2.getAccount());
+        wrongTradeParameter.setType(trade2.getType());
+        wrongTradeParameter.setBuyQuantity(trade2.getBuyQuantity());
+
+        assertThrows(IllegalArgumentException.class, () -> tradeService.updateTrade(trade.getId(), wrongTradeParameter));
     }
 
     @Test

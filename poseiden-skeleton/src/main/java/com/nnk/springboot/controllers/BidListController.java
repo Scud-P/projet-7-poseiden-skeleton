@@ -2,7 +2,6 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.DTO.BidListDTO;
 import com.nnk.springboot.domain.parameter.BidListParameter;
-import com.nnk.springboot.domain.util.BidListMapper;
 import com.nnk.springboot.services.BidService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

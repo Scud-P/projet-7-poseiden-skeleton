@@ -1,7 +1,9 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.RuleNameController;
+import com.nnk.springboot.domain.DTO.RuleNameDTO;
 import com.nnk.springboot.domain.RuleName;
+import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.services.RuleNameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,16 @@ public class RuleNameControllerTest {
     private static RuleName secondRuleName;
     private static List<RuleName> ruleNames;
 
+    private static RuleNameDTO firstRuleNameDTO;
+    private static RuleNameDTO secondRuleNameDTO;
+    private static List<RuleNameDTO> ruleNameDTOs;
+
+    private static RuleNameParameter firstRuleNameParam;
+    private static RuleNameParameter secondRuleNameParam;
+    private static List<RuleNameParameter> ruleNamesParam;
+
+
+
     @BeforeEach
     public void setUp() {
 
@@ -64,15 +76,24 @@ public class RuleNameControllerTest {
         firstRuleName = new RuleName(id, name, description, json, template, sqlStr, sqlPart);
         secondRuleName = new RuleName(id2, name2, description2, json2, template2, sqlStr2, sqlPart2);
         ruleNames = List.of(firstRuleName, secondRuleName);
+
+        firstRuleNameDTO = new RuleNameDTO(id, name, description, json, template, sqlStr, sqlPart);
+        secondRuleNameDTO = new RuleNameDTO(id2, name2, description2, json2, template2, sqlStr2, sqlPart2);
+        ruleNameDTOs = List.of(firstRuleNameDTO, secondRuleNameDTO);
+
+
+        firstRuleNameParam = new RuleNameParameter(id, name, description, json, template, sqlStr, sqlPart);
+        secondRuleNameParam = new RuleNameParameter(id2, name2, description2, json2, template2, sqlStr2, sqlPart2);
+        ruleNamesParam = List.of(firstRuleNameParam, secondRuleNameParam);
     }
 
     @Test
     public void testHome() throws Exception {
 
-        when(ruleNameService.getAllRuleNames()).thenReturn(ruleNames);
+        when(ruleNameService.getAllRuleNames()).thenReturn(ruleNameDTOs);
         String home = ruleNameController.home(model);
 
-        verify(model).addAttribute("ruleNames", ruleNames);
+        verify(model).addAttribute("ruleNameDTOs", ruleNameDTOs);
         assertEquals("ruleName/list", home);
     }
 
@@ -92,7 +113,7 @@ public class RuleNameControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("ruleName/add"));
 
-        verify(ruleNameService, times(0)).addRuleName(any(RuleName.class));
+        verify(ruleNameService, times(0)).addRuleName(any(RuleNameParameter.class));
     }
 
     @Test
@@ -110,14 +131,15 @@ public class RuleNameControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/ruleName/list"));
 
-        verify(ruleNameService, times(1)).addRuleName(any(RuleName.class));
+        verify(ruleNameService, times(1)).addRuleName(any(RuleNameParameter.class));
     }
 
     @Test
     @WithMockUser
     public void testShowRuleNameUpdateForm() throws Exception {
 
-        when(ruleNameService.getRuleNameById(anyInt())).thenReturn(firstRuleName);
+        when(ruleNameService.getRuleNameDTOById(anyInt())).thenReturn(firstRuleNameDTO);
+        when(ruleNameService.mapRuleNameDTOToParameter(any(RuleNameDTO.class))).thenReturn(firstRuleNameParam);
 
         mockMvc.perform(get("/ruleName/update/1"))
                 .andExpect(status().isOk())
@@ -140,7 +162,7 @@ public class RuleNameControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/ruleName/list"));
 
-        verify(ruleNameService, times(1)).updateRuleName(anyInt(), any(RuleName.class));
+        verify(ruleNameService, times(1)).updateRuleName(anyInt(), any(RuleNameParameter.class));
     }
 
     @Test
@@ -158,7 +180,7 @@ public class RuleNameControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("ruleName/update"));
 
-        verify(ruleNameService, times(0)).updateRuleName(anyInt(), any(RuleName.class));
+        verify(ruleNameService, times(0)).updateRuleName(anyInt(), any(RuleNameParameter.class));
     }
 
     @Test
