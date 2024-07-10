@@ -44,8 +44,6 @@ public class RuleNameController {
         return "ruleName/add";
     }
 
-    // TODO Can I just get the Parameter directly?
-
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         RuleNameParameter ruleNameParameter = ruleNameService.getRuleNameParameterById(id);
