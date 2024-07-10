@@ -58,12 +58,13 @@ public class RuleNameService {
         ruleNameRepository.delete(existingRuleName);
     }
 
-    public RuleNameDTO getRuleNameDTOById(Integer id) {
+    public RuleNameDTO getRuleNameDTOById(int id) {
         RuleName ruleName = getRuleNameById(id);
         return ruleNameMapper.toRuleNameDTO(ruleName);
     }
 
-    public RuleNameParameter mapRuleNameDTOToParameter(RuleNameDTO ruleNameDTO) {
-        return  ruleNameMapper.toRuleNameParameter(ruleNameDTO);
+    public RuleNameParameter getRuleNameParameterById(int id) {
+        RuleName ruleName = getRuleNameById(id);
+        return ruleNameMapper.toRuleNameParameter(ruleName);
     }
 }

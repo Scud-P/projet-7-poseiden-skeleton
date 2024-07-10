@@ -10,6 +10,6 @@ public interface RuleNameMapper {
 
     RuleName toRuleName(RuleNameParameter ruleNameParameter);
     RuleNameDTO toRuleNameDTO(RuleName ruleName);
-    RuleNameParameter toRuleNameParameter(RuleNameDTO ruleNameDTO);
+    RuleNameParameter toRuleNameParameter(RuleName rulename);
 
 }

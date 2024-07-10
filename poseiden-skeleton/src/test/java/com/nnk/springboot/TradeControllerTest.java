@@ -181,10 +181,7 @@ public class TradeControllerTest {
     @WithMockUser
     public void testShowTradeUpdateForm() throws Exception {
 
-        when(tradeService.getTradeDTOById(anyInt())).thenReturn(new TradeDTO(
-                        firstTrade.getId(), firstTrade.getAccount(), firstTrade.getType(), firstTrade.getBuyQuantity()));
-
-        when(tradeService.mapBidListDTOToParameter(any(TradeDTO.class))).thenReturn(new TradeParameter(
+        when(tradeService.getTradeParameterById(anyInt())).thenReturn(new TradeParameter(
                 firstTrade.getId(), firstTrade.getAccount(), firstTrade.getType(), firstTrade.getBuyQuantity()));
 
         mockMvc.perform(get("/trade/update/1"))

@@ -1,7 +1,6 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.DTO.TradeDTO;
-import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.domain.parameter.TradeParameter;
 import com.nnk.springboot.services.TradeService;
 import jakarta.validation.Valid;
@@ -47,8 +46,7 @@ public class TradeController {
 
     @GetMapping("/trade/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        TradeDTO tradeDTO = tradeService.getTradeDTOById(id);
-        TradeParameter tradeParameter = tradeService.mapBidListDTOToParameter(tradeDTO);
+        TradeParameter tradeParameter = tradeService.getTradeParameterById(id);
         model.addAttribute("tradeParameter", tradeParameter);
         return "trade/update";
     }

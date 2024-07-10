@@ -10,6 +10,5 @@ public interface TradeMapper {
 
     Trade toTrade(TradeParameter tradeParameter);
     TradeDTO toTradeDTO(Trade trade);
-    TradeParameter toTradeParameter(TradeDTO tradeDTO);
-
+    TradeParameter toTradeParameter(Trade trade);
 }

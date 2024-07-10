@@ -5,6 +5,7 @@ import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.domain.parameter.TradeParameter;
 import com.nnk.springboot.repositories.TradeRepository;
 import com.nnk.springboot.services.TradeService;
+import com.nnk.springboot.util.TradeMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class TradeServiceTest {
 
     @MockBean
     private TradeRepository tradeRepository;
+
+    @Autowired
+    private TradeMapper tradeMapper;
 
     private static Trade trade;
     private static Trade trade2;
@@ -194,6 +198,36 @@ public class TradeServiceTest {
     @Test
     public void testGetTradeByIdNotFound() {
         assertThrows(IllegalArgumentException.class, () -> tradeService.getTradeById(trade.getId()));
+    }
+
+    @Test
+    public void testGetTradeDTOById() {
+        TradeDTO tradeDTO = tradeMapper.toTradeDTO(trade);
+        when(tradeRepository.findById(anyInt())).thenReturn(Optional.ofNullable(trade));
+        TradeDTO result = tradeService.getTradeDTOById(trade.getId());
+        assertEquals(tradeDTO, result);
+        verify(tradeRepository, times(1)).findById(trade.getId());
+    }
+
+    @Test
+    public void testGetTradeDTOByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> tradeService.getTradeDTOById(5));
+        verify(tradeRepository, times(1)).findById(5);
+    }
+
+    @Test
+    public void testGetTradeParamById() {
+        TradeParameter tradeParam = tradeMapper.toTradeParameter(trade);
+        when(tradeRepository.findById(anyInt())).thenReturn(Optional.ofNullable(trade));
+        TradeParameter result = tradeService.getTradeParameterById(trade.getId());
+        assertEquals(tradeParam, result);
+        verify(tradeRepository, times(1)).findById(trade.getId());
+    }
+
+    @Test
+    public void testGetTradeParamByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> tradeService.getTradeParameterById(5));
+        verify(tradeRepository, times(1)).findById(5);
     }
 }
 

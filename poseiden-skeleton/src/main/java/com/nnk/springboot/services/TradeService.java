@@ -60,13 +60,15 @@ public class TradeService {
         tradeRepository.delete(tradeToDelete);
     }
 
-    public TradeParameter mapBidListDTOToParameter(TradeDTO tradeDTO) {
-        return tradeMapper.toTradeParameter(tradeDTO);
-    }
-
     public TradeDTO getTradeDTOById(int id) {
         Trade trade = tradeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No Trade found for Id " + id));
         return tradeMapper.toTradeDTO(trade);
+    }
+
+    public TradeParameter getTradeParameterById(int id) {
+        Trade trade = tradeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Trade found for Id " + id));
+        return tradeMapper.toTradeParameter(trade);
     }
 }

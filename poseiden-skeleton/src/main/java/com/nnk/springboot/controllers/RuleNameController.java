@@ -1,6 +1,7 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.DTO.RuleNameDTO;
+import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.services.RuleNameService;
 import jakarta.validation.Valid;
@@ -47,8 +48,7 @@ public class RuleNameController {
 
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        RuleNameDTO ruleNameDTO = ruleNameService.getRuleNameDTOById(id);
-        RuleNameParameter ruleNameParameter = ruleNameService.mapRuleNameDTOToParameter(ruleNameDTO);
+        RuleNameParameter ruleNameParameter = ruleNameService.getRuleNameParameterById(id);
         model.addAttribute("ruleNameParameter", ruleNameParameter);
         return "ruleName/update";
     }

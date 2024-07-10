@@ -1,15 +1,18 @@
 package com.nnk.springboot;
 
+import com.nnk.springboot.domain.DTO.RatingDTO;
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.parameter.RatingParameter;
 import com.nnk.springboot.repositories.RatingRepository;
 import com.nnk.springboot.services.RatingService;
+import com.nnk.springboot.util.RatingMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +27,9 @@ public class RatingServiceTest {
 
     @MockBean
     private RatingRepository ratingRepository;
+
+    @Autowired
+    private RatingMapper ratingMapper;
 
     private static Rating rating;
 
@@ -122,6 +128,59 @@ public class RatingServiceTest {
     @Test
     public void testGetRatingByIdNotFound() {
         assertThrows(IllegalArgumentException.class, () -> ratingService.getRatingById(rating.getId()));
+    }
+
+    @Test
+    public void testGetAllRatings() {
+
+        Rating secondRating = new Rating(2, rating.getMoodysRating(), rating.getSandPRating(), rating.getFitchRating(), rating.getOrderNumber());
+
+        RatingDTO ratingDTO = new RatingDTO
+                (rating.getId(), rating.getMoodysRating(), rating.getSandPRating(), rating.getFitchRating(), rating.getOrderNumber());
+        RatingDTO secondRatingDTO = new RatingDTO
+                (secondRating.getId(),rating.getMoodysRating(), rating.getSandPRating(), rating.getFitchRating(), rating.getOrderNumber());
+
+        List<Rating> ratings = List.of(rating, secondRating);
+        List<RatingDTO> ratingDTOs = List.of(ratingDTO, secondRatingDTO);
+
+        when(ratingRepository.findAll()).thenReturn(ratings);
+
+        List<RatingDTO> result = ratingService.getAllRatings();
+
+        assertEquals(2, result.size());
+        assertEquals(ratingDTOs, result);
+
+        verify(ratingRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetRatingDTOById() {
+        RatingDTO ratingDTO = ratingMapper.toRatingDTO(rating);
+        when(ratingRepository.findById(1)).thenReturn(Optional.ofNullable(rating));
+        RatingDTO result = ratingService.getRatingDTOById(1);
+        assertEquals(result, ratingDTO);
+        verify(ratingRepository, times(1)).findById(1);
+    }
+
+    @Test
+    public void testGetRatingDTOByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> ratingService.getRatingById(5));
+        verify(ratingRepository, times(1)).findById(5);
+    }
+
+    @Test
+    public void testGetRatingParamById() {
+        RatingParameter ratingParam = ratingMapper.toRatingParameter(rating);
+        when(ratingRepository.findById(1)).thenReturn(Optional.ofNullable(rating));
+        RatingParameter result = ratingService.getRatingParameterById(1);
+        assertEquals(result, ratingParam);
+        verify(ratingRepository, times(1)).findById(1);
+    }
+
+    @Test
+    public void testGetRatingParamByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> ratingService.getRatingParameterById(5));
+        verify(ratingRepository, times(1)).findById(5);
     }
 
 }

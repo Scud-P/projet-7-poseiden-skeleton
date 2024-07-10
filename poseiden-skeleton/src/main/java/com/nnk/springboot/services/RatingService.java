@@ -59,13 +59,15 @@ public class RatingService {
         ratingRepository.delete(existingRating);
     }
 
-    public RatingDTO getRatingDTOById(Integer id) {
+    public RatingDTO getRatingDTOById(int id) {
         Rating rating = ratingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No Rating found for id " + id));
         return ratingMapper.toRatingDTO(rating);
     }
 
-    public RatingParameter mapRatingDTOToParameter(RatingDTO ratingDTO) {
-        return ratingMapper.toRatingParameter(ratingDTO);
+    public RatingParameter getRatingParameterById(int id) {
+        Rating rating = ratingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Rating found for id " + id));
+        return ratingMapper.toRatingParameter(rating);
     }
 }

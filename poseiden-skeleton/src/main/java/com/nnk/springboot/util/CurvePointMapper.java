@@ -10,6 +10,5 @@ public interface CurvePointMapper {
 
     CurvePoint toCurvePoint(CurvePointParameter curvePointParameter);
     CurvePointDTO toCurvePointDTO(CurvePoint curvePoint);
-    CurvePointParameter toCurvePointParameter(CurvePointDTO curvePointDTO);
-
+    CurvePointParameter toCurvePointParameter(CurvePoint curvePoint);
 }

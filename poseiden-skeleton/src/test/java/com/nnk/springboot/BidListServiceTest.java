@@ -5,6 +5,7 @@ import com.nnk.springboot.domain.DTO.BidListDTO;
 import com.nnk.springboot.domain.parameter.BidListParameter;
 import com.nnk.springboot.repositories.BidListRepository;
 import com.nnk.springboot.services.BidService;
+import com.nnk.springboot.util.BidListMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class BidListServiceTest {
 
     @MockBean
     private BidListRepository bidListRepository;
+
+    @Autowired
+    private BidListMapper bidListMapper;
 
     private static BidList bidList;
 
@@ -65,7 +69,7 @@ public class BidListServiceTest {
                 security, status, trader, book, creationName, creationDate, revisionName, revisionDate, dealName, dealType, sourceListId, side);
 
         simplifiedBidList = new BidList();
-        simplifiedBidList.setId(0);
+        simplifiedBidList.setId(1);
         simplifiedBidList.setBidQuantity(bidQuantity);
         simplifiedBidList.setAccount(account);
         simplifiedBidList.setType(type);
@@ -151,5 +155,39 @@ public class BidListServiceTest {
 
         List<BidListDTO> foundBids = bidService.getAllBids();
         assertEquals(2, foundBids.size());
+    }
+
+    @Test
+    public void testGetBidListDTOById() {
+
+        BidListDTO bidListDTO = bidListMapper.toBidListDTO(bidList);
+        when(bidListRepository.findById(anyInt())).thenReturn(Optional.ofNullable(bidList));
+        BidListDTO result = bidService.getBidListDTOById(bidList.getId());
+
+        assertEquals(bidListDTO, result);
+        verify(bidListRepository, times(1)).findById(bidList.getId());
+    }
+
+    @Test
+    public void testGetBidListDTOByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> bidService.getBidListDTOById(5));
+        verify(bidListRepository, times(1)).findById(5);
+    }
+
+    @Test
+    public void testGetBidListParamById() {
+
+        BidListParameter bidListParam = bidListMapper.toBidListParameter(bidList);
+        when(bidListRepository.findById(anyInt())).thenReturn(Optional.ofNullable(bidList));
+        BidListParameter result = bidService.getBidListParameterById(bidList.getId());
+
+        assertEquals(bidListParam, result);
+        verify(bidListRepository, times(1)).findById(bidList.getId());
+    }
+
+    @Test
+    public void testGetBidListParamByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> bidService.getBidListParameterById(5));
+        verify(bidListRepository, times(1)).findById(5);
     }
 }

@@ -138,8 +138,7 @@ public class RuleNameControllerTest {
     @WithMockUser
     public void testShowRuleNameUpdateForm() throws Exception {
 
-        when(ruleNameService.getRuleNameDTOById(anyInt())).thenReturn(firstRuleNameDTO);
-        when(ruleNameService.mapRuleNameDTOToParameter(any(RuleNameDTO.class))).thenReturn(firstRuleNameParam);
+        when(ruleNameService.getRuleNameParameterById(anyInt())).thenReturn(firstRuleNameParam);
 
         mockMvc.perform(get("/ruleName/update/1"))
                 .andExpect(status().isOk())

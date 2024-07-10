@@ -10,6 +10,6 @@ public interface RatingMapper {
 
     Rating toRating(RatingParameter ratingparameter);
     RatingDTO toRatingDTO(Rating rating);
-    RatingParameter toRatingParameter(RatingDTO ratingDTO);
+    RatingParameter toRatingParameter(Rating rating);
 
 }

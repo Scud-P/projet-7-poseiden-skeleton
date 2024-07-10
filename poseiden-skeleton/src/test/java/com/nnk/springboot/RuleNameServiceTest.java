@@ -6,6 +6,7 @@ import com.nnk.springboot.domain.parameter.RatingParameter;
 import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import com.nnk.springboot.services.RuleNameService;
+import com.nnk.springboot.util.RuleNameMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class RuleNameServiceTest {
 
     @Autowired
     private RuleNameService ruleNameService;
+
+    @Autowired
+    private RuleNameMapper ruleNameMapper;
 
     @MockBean
     private RuleNameRepository ruleNameRepository;
@@ -149,6 +153,22 @@ public class RuleNameServiceTest {
         ruleNameService.deleteRuleName(firstRuleName.getId());
 
         verify(ruleNameRepository, times(1)).delete(firstRuleName);
+    }
+
+    @Test
+    public void testGetRuleNameParamById() {
+        RuleNameParameter ruleNameParam = ruleNameMapper.toRuleNameParameter(firstRuleName);
+        when(ruleNameRepository.findById(anyInt())).thenReturn(Optional.ofNullable(firstRuleName));
+        RuleNameParameter result = ruleNameService.getRuleNameParameterById(firstRuleName.getId());
+
+        assertEquals(ruleNameParam, result);
+        verify(ruleNameRepository, times(1)).findById(firstRuleName.getId());
+    }
+
+    @Test
+    public void testGetRuleNameParamByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> ruleNameService.getRuleNameParameterById(5));
+        verify(ruleNameRepository, times(1)).findById(5);
     }
 
 

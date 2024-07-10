@@ -175,8 +175,7 @@ public class RatingControllerTest {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
 
-        when(ratingService.getRatingDTOById(anyInt())).thenReturn(firstRatingDTO);
-        when(ratingService.mapRatingDTOToParameter(any(RatingDTO.class))).thenReturn(firstRatingParameter);
+        when(ratingService.getRatingParameterById(anyInt())).thenReturn(firstRatingParameter);
 
         mockMvc.perform(get("/rating/update/1"))
                 .andExpect(status().isOk())

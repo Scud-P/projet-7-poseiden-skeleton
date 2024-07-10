@@ -46,9 +46,7 @@ public class CurveController {
 
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-
-        CurvePointDTO curvePointDTO = curvePointService.getCurvePointDTOById(id);
-        CurvePointParameter curvePointParameter = curvePointService.mapCurvePointDTOToParameter(curvePointDTO);
+        CurvePointParameter curvePointParameter = curvePointService.getCurvePointParameterById(id);
         model.addAttribute("curvePointParameter", curvePointParameter);
         return "curvePoint/update";
     }

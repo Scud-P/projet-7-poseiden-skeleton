@@ -64,13 +64,15 @@ public class CurvePointService {
                 .toList();
     }
 
-    public CurvePointDTO getCurvePointDTOById(Integer id) {
+    public CurvePointDTO getCurvePointDTOById(int id) {
         CurvePoint curvePoint = curvePointRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No CurvePoint found for id " + id));
         return curvePointMapper.toCurvePointDTO(curvePoint);
     }
 
-    public CurvePointParameter mapCurvePointDTOToParameter(CurvePointDTO curvePointDTO) {
-        return curvePointMapper.toCurvePointParameter(curvePointDTO);
+    public CurvePointParameter getCurvePointParameterById(int id) {
+        CurvePoint curvePoint = curvePointRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No CurvePoint found for id " + id));
+        return curvePointMapper.toCurvePointParameter(curvePoint);
     }
 }

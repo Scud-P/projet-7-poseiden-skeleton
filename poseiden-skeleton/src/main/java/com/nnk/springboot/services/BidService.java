@@ -50,8 +50,10 @@ public class BidService {
         return bidListMapper.toBidListDTO(bidList);
     }
 
-    public BidListParameter mapBidListDTOToParameter(BidListDTO bidListDTO) {
-        return bidListMapper.toBidListParameter(bidListDTO);
+    public BidListParameter getBidListParameterById(int id) {
+        BidList bidList = bidListRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Bid found for Id " + id));
+        return bidListMapper.toBidListParameter(bidList);
     }
 
     @Transactional

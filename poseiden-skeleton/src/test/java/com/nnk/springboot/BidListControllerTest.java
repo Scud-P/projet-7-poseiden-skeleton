@@ -172,11 +172,7 @@ public class BidListControllerTest {
     @Test
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
-
-        when(bidService.getBidListDTOById(anyInt())).thenReturn(new BidListDTO
-                (firstList.getId(), firstList.getAccount(), firstList.getType(), firstList.getBidQuantity()));
-
-        when(bidService.mapBidListDTOToParameter(any(BidListDTO.class))).thenReturn(new BidListParameter
+        when(bidService.getBidListParameterById(anyInt())).thenReturn(new BidListParameter
                 (firstList.getId(), firstList.getAccount(), firstList.getType(), firstList.getBidQuantity()));
 
         mockMvc.perform(get("/bidList/update/1"))

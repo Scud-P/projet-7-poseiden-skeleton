@@ -160,10 +160,7 @@ public class CurveControllerTest {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
 
-        when(curveService.getCurvePointDTOById(anyInt())).thenReturn
-                (new CurvePointDTO(firstPoint.getId(), firstPoint.getCurveId(), firstPoint.getTerm(), firstPoint.getValue()));
-
-        when(curveService.mapCurvePointDTOToParameter(any(CurvePointDTO.class))).thenReturn
+        when(curveService.getCurvePointParameterById(anyInt())).thenReturn
                 (new CurvePointParameter(firstPoint.getId(), firstPoint.getCurveId(), firstPoint.getTerm(), firstPoint.getValue()));
 
         mockMvc.perform(get("/curvePoint/update/1"))

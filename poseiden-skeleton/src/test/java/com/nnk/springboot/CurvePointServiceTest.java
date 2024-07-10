@@ -155,4 +155,42 @@ public class CurvePointServiceTest {
         assertThrows(IllegalArgumentException.class, () -> curvePointService.getCurvePointById(curvePoint.getId()));
     }
 
+    @Test
+    public void testGetCurvePointDTOById() {
+        CurvePointDTO curvePointDTO = new CurvePointDTO(
+                curvePoint.getId(), curvePoint.getCurveId(), curvePoint.getValue(), curvePoint.getTerm());
+
+        when(curvePointRepository.findById(anyInt())).thenReturn(Optional.ofNullable(curvePoint));
+
+        CurvePointDTO result = curvePointService.getCurvePointDTOById(curvePoint.getId());
+
+        assertEquals(curvePointDTO, result);
+        verify(curvePointRepository, times(1)).findById(curvePoint.getId());
+    }
+
+    @Test
+    public void testGetCurvePointDTOByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> curvePointService.getCurvePointDTOById(5));
+        verify(curvePointRepository, times(1)).findById(5);
+
+    }
+
+    @Test
+    public void testGetCurvePointParamById() {
+        CurvePointParameter curvePointParam = new CurvePointParameter(
+                curvePoint.getId(), curvePoint.getCurveId(), curvePoint.getValue(), curvePoint.getTerm());
+
+        when(curvePointRepository.findById(anyInt())).thenReturn(Optional.ofNullable(curvePoint));
+
+        CurvePointParameter result = curvePointService.getCurvePointParameterById(curvePoint.getId());
+
+        assertEquals(curvePointParam, result);
+        verify(curvePointRepository, times(1)).findById(curvePoint.getId());
+    }
+
+    @Test
+    public void testGetCurvePointParamByIdNotFound() {
+        assertThrows(IllegalArgumentException.class, () -> curvePointService.getCurvePointParameterById(5));
+        verify(curvePointRepository, times(1)).findById(5);
+    }
 }
