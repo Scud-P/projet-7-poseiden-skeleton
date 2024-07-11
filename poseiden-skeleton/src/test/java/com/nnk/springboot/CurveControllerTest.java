@@ -132,6 +132,12 @@ public class CurveControllerTest {
                         .sessionAttr("curvePoint", firstPoint))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/curvePoint/list"));
+
+        CurvePointParameter curvePointParameter = new CurvePointParameter
+                (secondPoint.getId(), secondPoint.getCurveId(), secondPoint.getTerm(), secondPoint.getValue());
+
+
+        verify(curveService, times(1)).updateCurvePoint(1, curvePointParameter);
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.domain.DTO.RuleNameDTO;
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.domain.parameter.RatingParameter;
 import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import com.nnk.springboot.services.RuleNameService;
@@ -122,8 +121,6 @@ public class RuleNameServiceTest {
 
         RuleName resultingRuleName = ruleNameService.updateRuleName(firstRuleName.getId(), updatedRuleNameParameter);
 
-        //TODO what does thenAnswer() do exactly and why can't I do a simple thenReturn() ?
-
         when(ruleNameRepository.save(any(RuleName.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         assertEquals(firstRuleName.getId(), resultingRuleName.getId());
@@ -170,6 +167,4 @@ public class RuleNameServiceTest {
         assertThrows(IllegalArgumentException.class, () -> ruleNameService.getRuleNameParameterById(5));
         verify(ruleNameRepository, times(1)).findById(5);
     }
-
-
 }

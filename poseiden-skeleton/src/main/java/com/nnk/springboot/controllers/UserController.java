@@ -1,6 +1,7 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.DBUser;
+import com.nnk.springboot.domain.DTO.DBUserDTO;
+import com.nnk.springboot.domain.parameter.DBUserParameter;
 import com.nnk.springboot.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,24 +31,19 @@ public class UserController {
         if (!isAdmin) {
             return "redirect:/403";
         }
-        List<DBUser> users = userService.getAllUsers();
-        model.addAttribute("users", users);
+        List<DBUserDTO> dbUserDTOs = userService.getAllUsers();
+        model.addAttribute("dbUserDTOs", dbUserDTOs);
         return "DBUser/list";
     }
 
-    @GetMapping("/DBUser/add")
-    public String addUser(DBUser user) {
-        return "DBUser/add";
-    }
-
     @PostMapping("/DBUser/validate")
-    public String validate(@Valid DBUser dbUser, BindingResult result, Model model) {
+    public String validate(@Valid DBUserParameter dbUserParameter, BindingResult result, Model model) {
 
         // Check if password meets the criteria (8-20 characters, at least one lowercase and one uppercase letter,
         // at least one number and at least one special character)
         String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,20}$";
 
-        if (!dbUser.getPassword().matches(passwordPattern)) {
+        if (!dbUserParameter.getPassword().matches(passwordPattern)) {
             result.rejectValue("password", "error.dbUser",
                     "Password must be 8-20 characters long, contain at least one digit," +
                             " one lowercase letter, one uppercase letter, one special character (@#$%^&+=!)" +
@@ -55,31 +51,40 @@ public class UserController {
         }
         if (!result.hasErrors()) {
             try {
-                userService.addUser(dbUser);
-                model.addAttribute("users", userService.getAllUsers());
+                userService.addUser(dbUserParameter);
+                model.addAttribute("dbUserDTOs", userService.getAllUsers());
                 return "redirect:/DBUser/list";
+
             } catch (IllegalArgumentException e) {
                 result.rejectValue("username", "error.dbUser", "Username already exists");
+                model.addAttribute("dbUserParameter", dbUserParameter);
+                System.out.println("Validation errors: " + result.getAllErrors());
+                System.out.println("Username already used");
                 return "DBUser/add";
             }
         }
+        model.addAttribute("dbUserParameter", dbUserParameter);
+        return "DBUser/add";
+    }
+
+    @GetMapping("/DBUser/add")
+    public String addUser(DBUserParameter dbUserParameter) {
         return "DBUser/add";
     }
 
     @GetMapping("/DBUser/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        DBUser DBUser = userService.showUpdateFormForUser(id);
-        model.addAttribute("DBUser", DBUser);
+        DBUserParameter dbUserParameter = userService.showUpdateFormForUser(id);
+        model.addAttribute("DBUserParameter", dbUserParameter);
         return "DBUser/update";
     }
 
-    @PostMapping("/DBUser/update/{id}")
-    public String updateUser(@PathVariable("id") Integer id, @Valid DBUser dbUser,
-                             BindingResult result, Model model) {
+    @PostMapping("/DBUser/update")
+    public String updateUser(@Valid DBUserParameter dbUserParameter, BindingResult result, Model model) {
 
         String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,20}$";
 
-        if (!dbUser.getPassword().matches(passwordPattern)) {
+        if (!dbUserParameter.getPassword().matches(passwordPattern)) {
             result.rejectValue("password", "error.dbUser",
                     "Password must be 8-20 characters long, contain at least one digit," +
                             " one lowercase letter, one uppercase letter, one special character (@#$%^&+=!)" +
@@ -88,14 +93,16 @@ public class UserController {
 
         if (!result.hasErrors()) {
             try {
-                userService.updateUser(id, dbUser);
-                model.addAttribute("users", userService.getAllUsers());
+                userService.updateUser(dbUserParameter.getId(), dbUserParameter);
+                model.addAttribute("dbUserDTOs", userService.getAllUsers());
                 return "redirect:/DBUser/list";
+
             } catch (IllegalArgumentException e) {
                 result.rejectValue("username", "error.dbUser", "Username already exists");
-                return "DBUser/update";
+                model.addAttribute("dbUserParameter", dbUserParameter);
             }
         }
+        model.addAttribute("dbUserParameter", dbUserParameter);
         return "DBUser/update";
     }
 
@@ -104,11 +111,5 @@ public class UserController {
         userService.deleteUserById(id);
         model.addAttribute("users", userService.getAllUsers());
         return "redirect:/DBUser/list";
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        return "error";
     }
 }

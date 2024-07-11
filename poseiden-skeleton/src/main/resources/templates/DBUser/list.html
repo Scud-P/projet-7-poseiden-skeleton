@@ -77,14 +77,14 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="DBUser : ${users}">
-                <td style="width: 10%" th:text="${DBUser.id}"></td>
-                <td th:text="${DBUser.fullName}"></td>
-                <td th:text="${DBUser.username}"></td>
-                <td style="width: 25%" th:text="${DBUser.role}"></td>
+            <tr th:each="dbUserDTO : ${dbUserDTOs}">
+                <td style="width: 10%" th:text="${dbUserDTO.id}"></td>
+                <td th:text="${dbUserDTO.fullName}"></td>
+                <td th:text="${dbUserDTO.username}"></td>
+                <td style="width: 25%" th:text="${dbUserDTO.role}"></td>
                 <td style="width: 15%" class="text-center">
-                    <a th:href="@{/DBUser/update/{id}(id=${DBUser.id})}">Edit</a>&nbsp;|&nbsp;
-                    <a th:href="@{/DBUser/delete/{id}(id=${DBUser.id})}">Delete</a>
+                    <a th:href="@{/DBUser/update/{id}(id=${dbUserDTO.id})}">Edit</a>&nbsp;|&nbsp;
+                    <a th:href="@{/DBUser/delete/{id}(id=${dbUserDTO.id})}">Delete</a>
                 </td>
             </tr>
             </tbody>

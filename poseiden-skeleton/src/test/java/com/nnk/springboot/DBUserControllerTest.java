@@ -2,6 +2,8 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.controllers.UserController;
 import com.nnk.springboot.domain.DBUser;
+import com.nnk.springboot.domain.DTO.DBUserDTO;
+import com.nnk.springboot.domain.parameter.DBUserParameter;
 import com.nnk.springboot.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,10 +46,16 @@ public class DBUserControllerTest {
     private Model model;
 
     private static DBUser firstDBUser;
-
     private static DBUser secondDBUser;
+    private static List<DBUser> dbUsers;
 
-    private static List<DBUser> DBUsers;
+    private static DBUserDTO firstDBUserDTO;
+    private static DBUserDTO secondDBUserDTO;
+    private static List<DBUserDTO> dbUserDTOs;
+
+    private static DBUserParameter firstDBUserParam;
+    private static DBUserParameter secondDBUserParam;
+    private static List<DBUserParameter> dbUserParams;
 
     @Mock
     private Authentication authentication;
@@ -72,8 +80,15 @@ public class DBUserControllerTest {
 
         firstDBUser = new DBUser(id, userName, password, fullName, role);
         secondDBUser = new DBUser(id2, userName2, password2, fullName2, role2);
+        dbUsers = List.of(firstDBUser, secondDBUser);
 
-        DBUsers = List.of(firstDBUser, secondDBUser);
+        firstDBUserDTO = new DBUserDTO(id, userName, password, fullName, role);
+        secondDBUserDTO = new DBUserDTO(id2, userName2, password2, fullName2, role2);
+        dbUserDTOs = List.of(firstDBUserDTO, secondDBUserDTO);
+
+        firstDBUserParam = new DBUserParameter(id, userName, password, fullName, role);
+        secondDBUserParam = new DBUserParameter(id2, userName2, password2, fullName2, role2);
+        dbUserParams = List.of(firstDBUserParam, secondDBUserParam);
 
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
@@ -85,11 +100,12 @@ public class DBUserControllerTest {
 
         when(authentication.getAuthorities()).thenAnswer(invocation -> authorities);
 
-        when(userService.getAllUsers()).thenReturn(DBUsers);
+        when(userService.getAllUsers()).thenReturn(dbUserDTOs);
+
         String home = userController.home(model);
 
         assertEquals("DBUser/list", home);
-        verify(model).addAttribute("users", DBUsers);
+        verify(model).addAttribute("dbUserDTOs", dbUserDTOs);
     }
 
     @Test
@@ -114,7 +130,7 @@ public class DBUserControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/DBUser/list"));
 
-        verify(userService, times(1)).addUser(any(DBUser.class));
+        verify(userService, times(1)).addUser(any(DBUserParameter.class));
     }
 
     @Test
@@ -131,7 +147,7 @@ public class DBUserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("DBUser/add"));
 
-        verify(userService, times(0)).addUser(any(DBUser.class));
+        verify(userService, times(0)).addUser(any(DBUserParameter.class));
     }
 
     @Test
@@ -148,7 +164,7 @@ public class DBUserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("DBUser/add"));
 
-        verify(userService, times(0)).addUser(any(DBUser.class));
+        verify(userService, times(0)).addUser(any(DBUserParameter.class));
     }
 
     @Test
@@ -166,12 +182,8 @@ public class DBUserControllerTest {
     @Test
     public void testUpdateUserValidInput() throws Exception {
 
-        BindingResult mockResult = mock(BindingResult.class);
-        when(mockResult.hasErrors()).thenReturn(false);
-
-        when(userService.updateUser(anyInt(), any(DBUser.class))).thenReturn(firstDBUser);
-
-        mockMvc.perform(post("/DBUser/update/1")
+        mockMvc.perform(post("/DBUser/update")
+                        .param("id", String.valueOf(firstDBUser.getId()))
                         .param("username", secondDBUser.getUsername())
                         .param("password", secondDBUser.getPassword())
                         .param("fullName", secondDBUser.getFullName())
@@ -179,26 +191,29 @@ public class DBUserControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/DBUser/list"));
 
-        DBUser updatedDBUser = new DBUser(firstDBUser.getId(), secondDBUser.getUsername(), secondDBUser.getPassword(), secondDBUser.getFullName(), secondDBUser.getRole());
+        secondDBUserParam.setId(firstDBUserParam.getId());
 
-        verify(userService, times(1)).updateUser(firstDBUser.getId(), updatedDBUser);
+        verify(userService, times(1)).updateUser(1, secondDBUserParam);
     }
 
     @Test
     public void testUpdateUserInvalidInput() throws Exception {
-
-        mockMvc.perform(post("/DBUser/update/1")
-                        .param("password", "invalid"))
+        mockMvc.perform(post("/DBUser/update")
+                        .param("id", "1")
+                        .param("username", "invalid_username")  // Invalid input
+                        .param("password", "validPassword123!")
+                        .param("fullName", "John Doe")
+                        .param("role", "USER"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("DBUser/update"));
 
-        verify(userService, times(0)).updateUser(anyInt(), any(DBUser.class));
+        verify(userService, never()).updateUser(anyInt(), any(DBUserParameter.class));
     }
 
     @Test
     public void testShowUpdateForm() throws Exception {
 
-        when(userService.showUpdateFormForUser(firstDBUser.getId())).thenReturn(firstDBUser);
+        when(userService.showUpdateFormForUser(anyInt())).thenReturn(firstDBUserParam);
 
         mockMvc.perform(get("/DBUser/update/1"))
                 .andExpect(status().isOk())
@@ -211,6 +226,5 @@ public class DBUserControllerTest {
         mockMvc.perform(get("/DBUser/list"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/403"));
-
     }
 }

@@ -69,10 +69,4 @@ public class RuleNameController {
         model.addAttribute("ruleNames", ruleNameService.getAllRuleNames());
         return "redirect:/ruleName/list";
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        return "error";
-    }
 }

@@ -70,10 +70,4 @@ public class RatingController {
         model.addAttribute("ratings", ratingService.getAllRatings());
         return "redirect:/rating/list";
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        return "error";
-    }
 }

@@ -69,10 +69,4 @@ public class TradeController {
         model.addAttribute("trades", tradeService.getAllTrades());
         return "redirect:/trade/list";
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        return "error";
-    }
 }

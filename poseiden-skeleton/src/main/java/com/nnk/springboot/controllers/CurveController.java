@@ -69,10 +69,4 @@ public class CurveController {
         model.addAttribute("curvePoints", curvePointService.getAllCurvePoints());
         return "redirect:/curvePoint/list";
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        return "error";
-    }
 }

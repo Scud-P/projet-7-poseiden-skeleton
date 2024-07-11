@@ -1,8 +1,11 @@
 package com.nnk.springboot;
 
 import com.nnk.springboot.domain.DBUser;
+import com.nnk.springboot.domain.DTO.DBUserDTO;
+import com.nnk.springboot.domain.parameter.DBUserParameter;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.UserService;
+import com.nnk.springboot.util.DBUserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +29,17 @@ public class DBUserServiceTest {
     @MockBean
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private DBUserMapper dbUserMapper;
+
     @MockBean
     private UserRepository userRepository;
     private static DBUser firstDBUser;
     private static DBUser secondDBUser;
 
     private static List<DBUser> DBUsers;
+
+    private static DBUserParameter dbUserParameter;
 
     @BeforeEach
     public void setUp() {
@@ -51,10 +59,14 @@ public class DBUserServiceTest {
         secondDBUser = new DBUser(id2, userName2, password2, fullName2, role2);
 
         DBUsers = List.of(firstDBUser, secondDBUser);
+
+        dbUserParameter = new DBUserParameter
+                (firstDBUser.getId(), firstDBUser.getUsername(), firstDBUser.getPassword(), firstDBUser.getFullName(), firstDBUser.getRole());
     }
 
     @Test
     public void testAddUser() {
+
         DBUser testDBUser = new DBUser(1, "userName", "password", "fullName", "role");
         DBUser addedDBUserWithEncryptedPassword = new DBUser(1, "userName", "encodedPassword", "fullName", "role");
 
@@ -67,7 +79,7 @@ public class DBUserServiceTest {
 
         when(userRepository.save(any(DBUser.class))).thenReturn(addedDBUserWithEncryptedPassword);
 
-        DBUser resultingDBUser = userService.addUser(testDBUser);
+        DBUser resultingDBUser = userService.addUser(dbUserMapper.toDBUserParameter(testDBUser));
 
         assertEquals(testDBUser.getRole(), resultingDBUser.getRole());
         assertEquals(testDBUser.getUsername(), resultingDBUser.getUsername());
@@ -80,12 +92,16 @@ public class DBUserServiceTest {
 
     @Test
     public void testShowUserUpdateFormForUser() {
+
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(firstDBUser));
 
-        DBUser foundDBUser = userService.showUpdateFormForUser(firstDBUser.getId());
+        DBUserParameter expectedParameter = dbUserMapper.toDBUserParameter(firstDBUser);
+        expectedParameter.setPassword("");
 
-        assertEquals(foundDBUser, firstDBUser);
-        assertEquals("", foundDBUser.getPassword());
+        DBUserParameter foundDBUserParameter = userService.showUpdateFormForUser(firstDBUser.getId());
+
+        assertEquals(expectedParameter, foundDBUserParameter);
+        assertEquals("", foundDBUserParameter.getPassword());
     }
 
     @Test
@@ -107,8 +123,16 @@ public class DBUserServiceTest {
     @Test
     public void testUpdateFoundUser() {
 
-        when(userRepository.findById(firstDBUser.getId())).thenReturn(Optional.ofNullable(firstDBUser));
-        DBUser updatedDBUser = userService.updateUser(firstDBUser.getId(), secondDBUser);
+        userService.addUser(dbUserParameter);
+
+        when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(firstDBUser));
+
+        DBUserParameter updatedDBUserParameter = new DBUserParameter(
+                firstDBUser.getId(),secondDBUser.getUsername(),secondDBUser.getPassword(),secondDBUser.getFullName(),secondDBUser.getRole()
+        );
+
+        DBUser updatedDBUser = userService.updateUser(firstDBUser.getId(), updatedDBUserParameter);
+
         assertEquals(firstDBUser.getId(), updatedDBUser.getId());
         assertEquals(secondDBUser.getRole(), updatedDBUser.getRole());
         assertEquals(secondDBUser.getFullName(), updatedDBUser.getFullName());
@@ -120,7 +144,7 @@ public class DBUserServiceTest {
     @Test
     public void testUpdateUserNotFound() {
 
-        assertThrows(IllegalArgumentException.class, () -> userService.updateUser(firstDBUser.getId(), secondDBUser));
+        assertThrows(IllegalArgumentException.class, () -> userService.updateUser(firstDBUser.getId(), dbUserParameter));
         verify(userRepository, times(0)).save(any(DBUser.class));
 
     }
@@ -141,8 +165,8 @@ public class DBUserServiceTest {
     @Test
     public void testGetAllUsers() {
         when(userRepository.findAll()).thenReturn(DBUsers);
-        List<DBUser> foundDBUsers = userService.getAllUsers();
-        assertEquals(DBUsers, foundDBUsers);
+        List<DBUserDTO> foundDBUsers = userService.getAllUsers();
+        assertEquals(2, foundDBUsers.size());
     }
 
     @Test

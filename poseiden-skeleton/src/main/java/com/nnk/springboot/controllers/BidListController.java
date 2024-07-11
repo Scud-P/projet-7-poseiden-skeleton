@@ -66,10 +66,4 @@ public class BidListController {
         model.addAttribute("bidLists", bidService.getAllBids());
         return "redirect:/bidList/list";
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        return "error";
-    }
 }
