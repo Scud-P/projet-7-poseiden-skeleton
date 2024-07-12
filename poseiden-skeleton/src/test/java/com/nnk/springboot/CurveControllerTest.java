@@ -3,6 +3,7 @@ package com.nnk.springboot;
 import com.nnk.springboot.controllers.CurveController;
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.DTO.CurvePointDTO;
+import com.nnk.springboot.domain.parameter.BidListParameter;
 import com.nnk.springboot.domain.parameter.CurvePointParameter;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.services.CurvePointService;
@@ -185,6 +186,66 @@ public class CurveControllerTest {
                 .andExpect(redirectedUrl("/curvePoint/list"));
 
         verify(curveService, times(1)).deleteCurvePoint(firstPoint.getId());
+    }
+
+    @Test
+    @WithMockUser
+    public void testValidateCurvePointWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+
+        CurvePointParameter curvePointParameter = new CurvePointParameter();
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No CurvePoint found for id ")).when(curveService).addCurvePoint(any(CurvePointParameter.class));
+
+        String view = curveController.validate(curvePointParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteCurvePointWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No CurvePoint found for id ")).when(curveService).deleteCurvePoint(anyInt());
+
+        String view = curveController.deleteCurvePoint(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateCurvePointWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        CurvePointParameter curvePointParameter = new CurvePointParameter();
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No CurvePoint found for id ")).when(curveService).updateCurvePoint(anyInt(), any(CurvePointParameter.class));
+
+        String view = curveController.updateCurvePoint(1, curvePointParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateCurvePointWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No CurvePoint found for id ")).when(curveService).getCurvePointParameterById(anyInt());
+
+        String view = curveController.showUpdateForm(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateCurvePointResultHasErrors() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(true);
+
+        String view = curveController.showUpdateForm(1, model);
+        assertEquals("curvePoint/update", view);
     }
 
 }

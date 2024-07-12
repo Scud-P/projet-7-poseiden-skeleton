@@ -193,4 +193,77 @@ public class RatingControllerTest {
 
         verify(ratingService, times(1)).deleteRating(firstRating.getId());
     }
+
+    @Test
+    @WithMockUser
+    public void testValidateRatingWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+
+        RatingParameter ratingParameter = new RatingParameter();
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No Rating found for id ")).when(ratingService).addRating(any(RatingParameter.class));
+
+        String view = ratingController.validate(ratingParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteRatingWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No Rating found for id ")).when(ratingService).deleteRating(anyInt());
+
+        String view = ratingController.deleteRating(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateRatingWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        RatingParameter ratingParameter = new RatingParameter();
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No Rating found for id ")).when(ratingService).updateRating(anyInt(), any(RatingParameter.class));
+
+        String view = ratingController.updateRating(1, ratingParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateRatingWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No Rating found for id ")).when(ratingService).getRatingParameterById(anyInt());
+
+        String view = ratingController.showUpdateForm(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateRatingResultHasErrors() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(true);
+
+        String view = ratingController.showUpdateForm(1, model);
+        assertEquals("rating/update", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateRatingResultHasErrors() {
+        RatingParameter ratingParameter = new RatingParameter();
+
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(true);
+        String view = ratingController.updateRating(1, ratingParameter, result, model);
+
+        assertEquals("rating/update", view);
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.nnk.springboot;
 
-import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.DTO.CurvePointDTO;
 import com.nnk.springboot.domain.parameter.CurvePointParameter;

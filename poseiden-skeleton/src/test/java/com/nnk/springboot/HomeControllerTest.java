@@ -22,7 +22,7 @@ public class HomeControllerTest {
 
     @Test
     @WithMockUser
-    public void testHome() throws Exception {
+    public void testHome() {
         String home = homeController.home(model);
         assertEquals("home", home);
     }

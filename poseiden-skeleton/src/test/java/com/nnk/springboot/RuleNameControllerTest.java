@@ -3,6 +3,7 @@ package com.nnk.springboot;
 import com.nnk.springboot.controllers.RuleNameController;
 import com.nnk.springboot.domain.DTO.RuleNameDTO;
 import com.nnk.springboot.domain.RuleName;
+import com.nnk.springboot.domain.parameter.RatingParameter;
 import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.services.RuleNameService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -88,8 +90,7 @@ public class RuleNameControllerTest {
     }
 
     @Test
-    public void testHome() throws Exception {
-
+    public void testHome() {
         when(ruleNameService.getAllRuleNames()).thenReturn(ruleNameDTOs);
         String home = ruleNameController.home(model);
 
@@ -108,7 +109,6 @@ public class RuleNameControllerTest {
     @Test
     @WithMockUser
     public void testValidateRuleNameInvalidInput() throws Exception {
-
         mockMvc.perform(post("/ruleName/validate"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("ruleName/add"));
@@ -119,7 +119,6 @@ public class RuleNameControllerTest {
     @Test
     @WithMockUser
     public void testValidateRuleNameValidInput() throws Exception {
-
         mockMvc.perform(post("/ruleName/validate")
                         .param("name", firstRuleName.getName())
                         .param("description", firstRuleName.getDescription())
@@ -137,7 +136,6 @@ public class RuleNameControllerTest {
     @Test
     @WithMockUser
     public void testShowRuleNameUpdateForm() throws Exception {
-
         when(ruleNameService.getRuleNameParameterById(anyInt())).thenReturn(firstRuleNameParam);
 
         mockMvc.perform(get("/ruleName/update/1"))
@@ -148,7 +146,6 @@ public class RuleNameControllerTest {
     @Test
     @WithMockUser
     public void testUpdateRuleNameValidRuleName() throws Exception {
-
         when(ruleNameService.getRuleNameById(firstRuleName.getId())).thenReturn(firstRuleName);
 
         mockMvc.perform(post("/ruleName/update/1")
@@ -185,7 +182,6 @@ public class RuleNameControllerTest {
     @Test
     @WithMockUser
     public void testDeleteFoundRuleName() throws Exception {
-
         when(ruleNameService.getRuleNameById(firstRuleName.getId())).thenReturn(firstRuleName);
 
         mockMvc.perform(get("/ruleName/delete/1"))
@@ -193,5 +189,65 @@ public class RuleNameControllerTest {
                 .andExpect(redirectedUrl("/ruleName/list"));
 
         verify(ruleNameService, times(1)).deleteRuleName(firstRuleName.getId());
+    }
+
+    @Test
+    @WithMockUser
+    public void testValidateRuleNameWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+
+        RuleNameParameter ruleNameParameter = new RuleNameParameter();
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No RuleName found for id ")).when(ruleNameService).addRuleName(any(RuleNameParameter.class));
+
+        String view = ruleNameController.validate(ruleNameParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteRuleNameWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No RuleName found for id ")).when(ruleNameService).deleteRuleName(anyInt());
+
+        String view = ruleNameController.deleteRuleName(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateRuleNameWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        RuleNameParameter ruleNameParameter = new RuleNameParameter();
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No RuleName found for id ")).when(ruleNameService).updateRuleName(anyInt(), any(RuleNameParameter.class));
+
+        String view = ruleNameController.updateRuleName(1, ruleNameParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateRuleNameWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No RuleName found for id ")).when(ruleNameService).getRuleNameParameterById(anyInt());
+
+        String view = ruleNameController.showUpdateForm(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateRuleNameResultHasErrors() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(true);
+
+        String view = ruleNameController.showUpdateForm(1, model);
+        assertEquals("ruleName/update", view);
     }
 }

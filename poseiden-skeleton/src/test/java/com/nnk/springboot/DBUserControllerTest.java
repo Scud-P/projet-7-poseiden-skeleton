@@ -4,6 +4,7 @@ import com.nnk.springboot.controllers.UserController;
 import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.domain.DTO.DBUserDTO;
 import com.nnk.springboot.domain.parameter.DBUserParameter;
+import com.nnk.springboot.exceptions.UserNameAlreadyUsedException;
 import com.nnk.springboot.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -211,8 +213,21 @@ public class DBUserControllerTest {
     }
 
     @Test
-    public void testShowUpdateForm() throws Exception {
+    public void testUpdateUserPasswordDoesNotMatchRegex() throws Exception {
+        mockMvc.perform(post("/DBUser/update")
+                        .param("id", "1")
+                        .param("username", "validUsername")  // Invalid input
+                        .param("password", "invalidPassword")
+                        .param("fullName", "John Doe")
+                        .param("role", "USER"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("DBUser/update"));
 
+        verify(userService, never()).updateUser(anyInt(), any(DBUserParameter.class));
+    }
+
+    @Test
+    public void testShowUpdateForm() throws Exception {
         when(userService.showUpdateFormForUser(anyInt())).thenReturn(firstDBUserParam);
 
         mockMvc.perform(get("/DBUser/update/1"))
@@ -222,9 +237,87 @@ public class DBUserControllerTest {
 
     @Test
     public void testHomeNotAdmin() throws Exception {
-
         mockMvc.perform(get("/DBUser/list"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/403"));
     }
+
+    @Test
+    @WithMockUser
+    public void testValidateUserWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        DBUserParameter dbUserParameter = new DBUserParameter();
+        dbUserParameter.setPassword("ATotallyValidPassword1!");
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No User found for id ")).when(userService).addUser(any(DBUserParameter.class));
+
+        String view = userController.validate(dbUserParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteUserWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No User found for id ")).when(userService).deleteUserById(anyInt());
+
+        String view = userController.deleteUser(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateUserWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        DBUserParameter dbUserParameter = new DBUserParameter();
+        dbUserParameter.setPassword("ATotallyValidPassword1!");
+
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No User found for id ")).when(userService).updateUser(anyInt(), any(DBUserParameter.class));
+
+        String view = userController.updateUser(dbUserParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateTradeWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No user found for id ")).when(userService).showUpdateFormForUser(anyInt());
+
+        String view = userController.showUpdateForm(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateTradeWithUserNameAlreadyUsedExceptionShouldReturnToUpdateForm() {
+        DBUserParameter dbUserParameter = new DBUserParameter();
+        dbUserParameter.setPassword("ATotallyValidPassword1!");
+        BindingResult result = mock(BindingResult.class);
+
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new UserNameAlreadyUsedException("Username already used")).when(userService).updateUser(anyInt(), any(DBUserParameter.class));
+
+        String view = userController.updateUser(dbUserParameter, result, model);
+        assertEquals("DBUser/update", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testValidateUserWithUserNameAlreadyUsedExceptionShouldReturnAddForm() {
+        BindingResult result = mock(BindingResult.class);
+        DBUserParameter dbUserParameter = new DBUserParameter();
+        dbUserParameter.setPassword("ATotallyValidPassword1!");
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new UserNameAlreadyUsedException("Username already used")).when(userService).addUser(any(DBUserParameter.class));
+
+        String view = userController.validate(dbUserParameter, result, model);
+        assertEquals("DBUser/add", view);
+    }
+
 }

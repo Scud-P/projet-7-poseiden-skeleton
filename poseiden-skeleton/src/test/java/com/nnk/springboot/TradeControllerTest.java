@@ -3,6 +3,7 @@ package com.nnk.springboot;
 import com.nnk.springboot.controllers.TradeController;
 import com.nnk.springboot.domain.DTO.TradeDTO;
 import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.domain.parameter.RuleNameParameter;
 import com.nnk.springboot.domain.parameter.TradeParameter;
 import com.nnk.springboot.services.TradeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -230,6 +231,55 @@ public class TradeControllerTest {
         mockMvc.perform(get("/trade/delete/1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/trade/list"));
+
+        verify(tradeService, times(1)).deleteTrade(1);
     }
 
+    @Test
+    @WithMockUser
+    public void testValidateTradeWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        TradeParameter tradeParameter = new TradeParameter();
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No RuleName found for id ")).when(tradeService).addTrade(any(TradeParameter.class));
+
+        String view = tradeController.validate(tradeParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteTradeWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No Trade found for id ")).when(tradeService).deleteTrade(anyInt());
+
+        String view = tradeController.deleteTrade(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateTradeWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        TradeParameter tradeParameter = new TradeParameter();
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No Trade found for id ")).when(tradeService).updateTrade(anyInt(), any(TradeParameter.class));
+
+        String view = tradeController.updateTrade(1, tradeParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateTradeWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No Trade found for id ")).when(tradeService).getTradeParameterById(anyInt());
+
+        String view = tradeController.showUpdateForm(1, model);
+        assertEquals("error", view);
+    }
 }

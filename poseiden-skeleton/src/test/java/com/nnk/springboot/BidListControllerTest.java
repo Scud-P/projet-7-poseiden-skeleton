@@ -193,4 +193,64 @@ public class BidListControllerTest {
         verify(bidService, times(1)).deleteBid(firstList.getId());
     }
 
+    @Test
+    @WithMockUser
+    public void testValidateBidListWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+
+        BidListParameter bidListParameter = new BidListParameter();
+        when(result.hasErrors()).thenReturn(false);
+        doThrow(new IllegalArgumentException("No BidList found for id ")).when(bidService).addBid(any(BidListParameter.class));
+
+        String view = bidController.validate(bidListParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteBidListWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No BidList found for id ")).when(bidService).deleteBid(anyInt());
+
+        String view = bidController.deleteBid(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdateBidListWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        BidListParameter bidListParameter = new BidListParameter();
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No BidList found for id ")).when(bidService).updateBidList(anyInt(), any(BidListParameter.class));
+
+        String view = bidController.updateBid(1, bidListParameter, result, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateBidListWithIllegalArgumentExceptionShouldReturnError() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(false);
+
+        doThrow(new IllegalArgumentException("No BidList found for id ")).when(bidService).getBidListParameterById(anyInt());
+
+        String view = bidController.showUpdateForm(1, model);
+        assertEquals("error", view);
+    }
+
+    @Test
+    @WithMockUser
+    public void testShowUpdateBidListResultHasErrors() {
+        BindingResult result = mock(BindingResult.class);
+        when(result.hasErrors()).thenReturn(true);
+
+        String view = bidController.showUpdateForm(1, model);
+        assertEquals("bidList/update", view);
+    }
+
 }

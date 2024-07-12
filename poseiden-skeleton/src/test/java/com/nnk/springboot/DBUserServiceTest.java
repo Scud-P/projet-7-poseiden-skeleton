@@ -3,6 +3,7 @@ package com.nnk.springboot;
 import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.domain.DTO.DBUserDTO;
 import com.nnk.springboot.domain.parameter.DBUserParameter;
+import com.nnk.springboot.exceptions.UserNameAlreadyUsedException;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.UserService;
 import com.nnk.springboot.util.DBUserMapper;
@@ -70,13 +71,7 @@ public class DBUserServiceTest {
         DBUser testDBUser = new DBUser(1, "userName", "password", "fullName", "role");
         DBUser addedDBUserWithEncryptedPassword = new DBUser(1, "userName", "encodedPassword", "fullName", "role");
 
-        System.out.println("userService: " + userService);
-
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-
-        System.out.println("encoder: " + passwordEncoder);
-
-
         when(userRepository.save(any(DBUser.class))).thenReturn(addedDBUserWithEncryptedPassword);
 
         DBUser resultingDBUser = userService.addUser(dbUserMapper.toDBUserParameter(testDBUser));
@@ -87,6 +82,13 @@ public class DBUserServiceTest {
         assertEquals(testDBUser.getId(), resultingDBUser.getId());
 
         verify(passwordEncoder, times(1)).encode("password");
+    }
+
+    @Test
+    public void testAddUserAlreadyUsed() {
+        DBUser testDBUser = new DBUser(1, "userName", "password", "fullName", "role");
+        when(userRepository.findByUsername(anyString())).thenReturn(testDBUser);
+        assertThrows(UserNameAlreadyUsedException.class, () -> userService.addUser(dbUserParameter));
     }
 
 
@@ -143,11 +145,22 @@ public class DBUserServiceTest {
 
     @Test
     public void testUpdateUserNotFound() {
-
         assertThrows(IllegalArgumentException.class, () -> userService.updateUser(firstDBUser.getId(), dbUserParameter));
         verify(userRepository, times(0)).save(any(DBUser.class));
-
     }
+
+    @Test
+    public void testUpdateUserAlreadyUsed() {
+        when(userRepository.findById(1)).thenReturn(Optional.of(firstDBUser));
+        DBUser anotherUser = new DBUser(2, "newUserName", "password", "fullName", "role");
+        when(userRepository.findByUsername("newUserName")).thenReturn(anotherUser);
+
+        DBUserParameter updateUserParameter = new DBUserParameter(1, "newUserName", "password", "fullName", "role");
+
+        assertThrows(UserNameAlreadyUsedException.class, () -> userService.updateUser(1, updateUserParameter));
+        verify(userRepository, times(0)).save(any(DBUser.class));
+    }
+
 
     @Test
     public void testDeleteUserFound() {

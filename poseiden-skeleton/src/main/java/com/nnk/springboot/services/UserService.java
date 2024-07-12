@@ -3,6 +3,7 @@ package com.nnk.springboot.services;
 import com.nnk.springboot.domain.DBUser;
 import com.nnk.springboot.domain.DTO.DBUserDTO;
 import com.nnk.springboot.domain.parameter.DBUserParameter;
+import com.nnk.springboot.exceptions.UserNameAlreadyUsedException;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.util.DBUserMapper;
 import jakarta.annotation.Nonnull;
@@ -28,8 +29,11 @@ public class UserService {
 
     @Transactional
     public DBUser addUser(@Nonnull DBUserParameter dbUserParameter) {
+
+        // Check if the userName is already used by another user, we want to maintain uniqueness
+        // since our CustomUserDetailsService loads users by their userName to create userDetails objects.
         if (isUserNameAlreadyUsed(dbUserParameter.getUsername())) {
-            throw new IllegalArgumentException("userName already used");
+            throw new UserNameAlreadyUsedException("userName already used");
         }
         DBUser dbUserToAdd = dbUserMapper.toDBUser(dbUserParameter);
         dbUserToAdd.setPassword(passwordEncoder.encode(dbUserToAdd.getPassword()));
@@ -52,10 +56,12 @@ public class UserService {
 
         DBUser existingDBUser = getUserById(dbUserParameter.getId());
 
+        // Check if the userName field of the dbUserParameter object is different from the DBUser object we are trying to update's userName field.
+        // If they are the same, we still want to set the other fields that might have been modified by the user on form submission and retain
+        // unique usernames while persisting the entity.
 
         if (!existingDBUser.getUsername().equals(dbUserParameter.getUsername()) && isUserNameAlreadyUsed(dbUserParameter.getUsername())) {
-            System.out.println("Service caught that the username already exists");
-            throw new IllegalArgumentException("Username already exists");
+            throw new UserNameAlreadyUsedException("Username already exists");
         }
 
         existingDBUser.setRole(dbUserParameter.getRole());
@@ -86,14 +92,9 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    // Boolean method to check if a userName is already used
     public boolean isUserNameAlreadyUsed(String userNameToCheck) {
         Optional<DBUser> optionalUser = Optional.ofNullable(userRepository.findByUsername(userNameToCheck));
         return optionalUser.isPresent();
-    }
-
-    public DBUserParameter getDBUserParameterById(int id) {
-        DBUser dbUser = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No User found for id " + id));
-        return dbUserMapper.toDBUserParameter(dbUser);
     }
 }
