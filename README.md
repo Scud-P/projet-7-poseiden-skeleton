@@ -1,4 +1,4 @@
-# Openclassrooms - Parcours de développeur d'applications Java - Projet 6
+# OpenClassrooms - Parcours de développeur d'applications Java - Projet 7
 
 ## Solution choisie
 
