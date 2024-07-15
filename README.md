@@ -329,33 +329,33 @@ base de données écrits en dur dans notre fichier application.properties.
 
 ## Galerie
 
-Default Spring Security sign in form providing Session based Auth
+**Default Spring Security sign in form providing Session based Auth**
 
 ![Default Spring Security sign in form providing Session based Auth](https://imgur.com/vKwimDs.jpeg)
 
-Default Spring Security sign out form invalidating the Session
+**Default Spring Security sign out form invalidating the Session**
 ![Default Spring Security sign out form invalidating the Session](https://imgur.com/UKdfq9K.jpeg)
 
-User Home
+**User Home**
 ![User Home](https://imgur.com/opIFzZH.jpeg)
 
-Rating List
+**Rating List**
 ![Rating List](https://imgur.com/RDchsSk.jpeg)
 
-Updating a rating
+**Updating a rating**
 ![Updating a Rating](https://imgur.com/xqSijWK.jpeg)
 
-Validation Error
+**Validation Error**
 ![Validation Error](https://imgur.com/yl4PlzF.jpeg)
 
-Access denied - Endpoint restricted to Admins
+**Access denied - Endpoint restricted to Admins**
 ![Access denied - Endpoint restricted to Admins](https://imgur.com/EBhn4TL.jpeg)
 
-Admin Home with additional user management section
+**Admin Home with additional user management section**
 ![Alt text](https://imgur.com/L3v8cVN.jpeg)
 
-Restricted User Management Section
+**Restricted User Management Section**
 ![Restricted User Management Section](https://imgur.com/4CLqX8G.jpeg)
 
-Hashed Passwords in DB
+**Hashed Passwords in DB**
 ![Hashed Passwords in DB](https://imgur.com/Ixow6bz.jpeg)
