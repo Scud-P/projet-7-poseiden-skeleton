@@ -1,10 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Poseidon</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .logo-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            color: #071226;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-text p {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-$END$
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="text-center mt-5 mb-5">
+                <h3>Login with Username and Password</h3>
+            </div>
+            <form action="/login" method="post">
+                <div class="form-group row">
+                    <label for="username" class="col-sm-2 col-form-label">User:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="Enter your Username">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="password" class="col-sm-2 col-form-label">Password:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Enter your Password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            </form>
+            <div th:if="${error}" class="alert alert-danger text-center my-3">
+                <span class="font-weight-bold">Error: </span>
+                <span th:text="${error}"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="logo-container">
+    <img src="/assets/logo.png" alt="logo" width="120" height="96" class="d-inline-block align-text-top">
+    <div class="logo-text font-weight-bold">
+        <p>Poseidon</p>
+        <p>Capital</p>
+        <p>Solutions</p>
+    </div>
+</div>
 </body>
 </html>

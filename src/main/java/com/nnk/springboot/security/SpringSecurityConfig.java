@@ -33,6 +33,8 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
+                // Allows access to the folder containing the Poseidon Logo, so we can display it in the custom login form
+                        .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/DBUser/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -41,8 +43,14 @@ public class SpringSecurityConfig {
                 .exceptionHandling(handling -> handling
                         .accessDeniedPage("/403")
                 )
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(Customizer.withDefaults());
+                .csrf(AbstractHttpConfigurer::disable
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                );
         return http.build();
     }
 
